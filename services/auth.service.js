@@ -8,7 +8,7 @@ const { CustomError } = require('../utils/helpers');
 const usersService = new UsersService();
 
 class AuthService {
-  constructor() {}
+  constructor() { }
 
   async checkUsersCredentials(email, password) {
     let user = await usersService.findUserByEmailOr404(email);
@@ -38,12 +38,12 @@ class AuthService {
   async userToken(id) {
     let user = await models.Users.scope('view_me').findOne(
       {
-        where: {id},
+        where: { id },
         include: [{
           model: models.Profiles,
           as: 'profiles'
         }]
-      },   
+      },
       { raw: true }
     )
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')

@@ -8,8 +8,8 @@ const usersService = new usersServices()
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const transaction = await queryInterface.sequelize.transaction()    
+  async up(queryInterface, Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction()
     try {
       const adminUser = await usersService.findUserByEmailOr404('example@academlo.com')
       const adminRole = await rolesService.findRoleByName('admin')
@@ -19,10 +19,10 @@ module.exports = {
           role_id: adminRole.id,
           created_at: new Date(),
           updated_at: new Date(),
-        } 
+        }
       ]
-      
-      await queryInterface.bulkInsert('profiles', profiles , {transaction})
+
+      await queryInterface.bulkInsert('profiles', profiles, { transaction })
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
@@ -30,19 +30,19 @@ module.exports = {
     }
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
 
     try {
       const adminUser = await usersService.findUserByEmailOr404('example@academlo.com')
       const adminRole = await rolesService.findRoleByName('admin')
-      
+
       await queryInterface.bulkDelete('profiles', {
         user_id: {
           [Op.and]: [adminUser.id]
         },
-        role_id:{
-          [Op.and]:[adminRole.id]
+        role_id: {
+          [Op.and]: [adminRole.id]
         }
       }, { transaction })
       await transaction.commit()
