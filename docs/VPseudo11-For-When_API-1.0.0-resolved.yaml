@@ -1,0 +1,58 @@
+---
+openapi: 3.0.0
+info:
+  title: For Wath? API
+  description: This is a simple API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+  x-contact:
+    name: Ps3udoDev
+    email: v.pseudo.11@gmail.com
+servers:
+- url: http://localhost:8000/api/v1/
+  description: Development server
+tags:
+- name: auth
+  description: Operations for registration and login
+paths:
+  /auth/login:
+    post:
+      tags:
+      - auth
+      summary: allows you to access and use the app
+      description: The user sends the email and his password to be able to receive a token with which he will make requests based on his ID
+      operationId: authLogin
+      requestBody:
+        $ref: '#/components/requestBodies/loginBody'
+      responses:
+        "200":
+          description: correct credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+components:
+  schemas:
+    LoginResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Correct Credentials!
+        token:
+          type: string
+          example: sasasaa
+  requestBodies:
+    loginBody:
+      description: parameters required to login
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
