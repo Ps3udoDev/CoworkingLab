@@ -11,7 +11,7 @@ info:
     name: Ps3udoDev
     email: v.pseudo.11@gmail.com
 servers:
-- url: http://localhost:8000/api/v1/
+- url: http://localhost:9000/api/v1/
   description: Development server
 tags:
 - name: auth
@@ -25,17 +25,86 @@ paths:
       description: The user sends the email and his password to be able to receive a token with which he will make requests based on his ID
       operationId: authLogin
       requestBody:
-        $ref: '#/components/requestBodies/loginBody'
+        $ref: '#/components/requestBodies/loginRequest'
       responses:
         "200":
           description: correct credentials
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResponse'
+                $ref: '#/components/schemas/Login'
+        "400":
+          description: Email not given or Password not provided for compare
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Email not given or Password not provided for compare
+                  errorName: 
+                    type: string
+                    example: Not Found
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Wrong Credentials
+                  errorName: 
+                    type: string
+                    example: Unauthorized
+        "404":
+          description: the user's email is not found in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found User
+                  errorName: 
+                    type: string
+                    example: Not Found
+                    
+  /auth/forget-password:
+    post:
+      tags:
+      - auth
+      summary: allows you to recover your password
+      description: The user generates an email to recover his password in case he forgets it
+      operationId: authForgetPasword
+      requestBody:
+        $ref: '#/components/requestBodies/forget-password'
+      responses:
+        "200":
+          description: Email sended!, check your inbox
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forget-Password'
+        "404":
+          description: the user's email is not found in the database
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found User
+                  errorName: 
+                    type: string
+                    example: Not Found
 components:
   schemas:
-    LoginResponse:
+    Login:
       type: object
       properties:
         message:
@@ -43,9 +112,19 @@ components:
           example: Correct Credentials!
         token:
           type: string
-          example: sasasaa
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    Forget-Password:
+      type: object
+      properties:
+        results:
+          type: object
+          properties:
+            message:
+              type: string
+              example: Email sended!, check your inbox
+
   requestBodies:
-    loginBody:
+    loginRequest:
       description: parameters required to login
       content:
         application/json:
@@ -56,3 +135,13 @@ components:
                 type: string
               password:
                 type: string
+    forget-password:
+      description: parameters required to generate a new password in case of forget password
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+                example: example@example.com 

@@ -62,13 +62,12 @@ const forgetPassword = async (request, response, next) => {
   try {
     let userAndToken = await authService.createRecoveryToken(email)
     let user = await usersService.setTokenUser(userAndToken.user.id, userAndToken.token)
-
     try {
       await sender.sendMail({
         from: process.env.MAIL_SEND,
         to: user.email,
         subject: 'Restore Password',
-        html: `<span>${process.env.PASSWORD_RESET_DOMAIN}api/v1/auth/change-password/${userAndToken.token}</span>`
+        html: `<span>${process.env.PASSWORD_RESET_DOMAIN}/api/v1/auth/change-password/${userAndToken.token}</span>`
       })
     } catch (error) {
       throw new CustomError('Error Sending the Recovery email', 500, 'Application Error')

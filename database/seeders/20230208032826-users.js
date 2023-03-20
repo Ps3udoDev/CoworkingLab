@@ -13,7 +13,7 @@ module.exports = {
         id: uuid.v4(),
         first_name: 'Javier',
         last_name: 'Calva',
-        email: 'example@academlo.com',
+        email: 'v.pseudo.11@gmail.com',
         username: 'example@academlo.com',
         password: hashPassword('TEST12345'),
         created_at: new Date(),
