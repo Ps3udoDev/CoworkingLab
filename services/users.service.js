@@ -25,10 +25,20 @@ class UsersService {
       options.where.id = id
     }
 
-    const { name } = query
-    if (name) {
-      options.where.name = { [Op.iLike]: `%${name}%` }
-    }
+    const { first_name, last_name, email, username, email_verified, country_id, code_phone, phone, created_at } = query
+
+    const elapsedTime = Date.now();
+    const today = new Date(elapsedTime);
+    const date = new Date(created_at)
+    if (first_name) options.where.first_name = { [Op.iLike]: `%${first_name}%` }
+    if (last_name) options.where.last_name = { [Op.iLike]: `%${last_name}%` }
+    if (email) options.where.email = { [Op.iLike]: `%${email}%` }
+    if (username) options.where.username = { [Op.iLike]: `%${username}%` }
+    if (email_verified) options.where.email_verified = { [Op.gt]: email_verified, [Op.lt]: today.toLocaleDateString() }
+    if (country_id) options.where.country_id = { [Op.eq]: country_id }
+    if (code_phone) options.where.code_phone = { [Op.iLike]: `%${code_phone}%` }
+    if (phone) options.where.phone = { [Op.iLike]: `%${phone}%` }
+    if (created_at) options.where.created_at = { [Op.between]: [new Date(created_at), today.toISOString().slice(0, 10)] }
 
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
