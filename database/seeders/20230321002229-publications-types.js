@@ -1,24 +1,26 @@
-//Seeder creado
-
-//noten que es igual a una migración!
-
-'use strict'
+'use strict';
 const { Op } = require('sequelize')
-
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up(queryInterface, /*Sequelize*/) {
+  async up(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.bulkInsert('countries', [
+      await queryInterface.bulkInsert('publications_types', [
         {
           id: '1',
-          name: 'Ecuador',
+          name: 'Entrevistas',
+          description: 'test description',
           created_at: new Date(),
-          updated_at: new Date()
-        }
+          updated_at: new Date(),
+        },
+        {
+          id: '2',
+          name: 'Test2',
+          description: 'test description 2',
+          created_at: new Date(),
+          updated_at: new Date(),
+        },
       ], { transaction })
-
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
@@ -26,12 +28,12 @@ module.exports = {
     }
   },
 
-  async down(queryInterface, /*Sequelize*/) {
+  async down(queryInterface, /* Sequelize */) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.bulkDelete('countries', {
+      await queryInterface.bulkDelete('publications_types', {
         name: {
-          [Op.or]: ['Ecuador']
+          [Op.or]: ['Entrevistas']
         }
       }, { transaction })
       await transaction.commit()
@@ -40,4 +42,4 @@ module.exports = {
       throw error
     }
   }
-}
+};

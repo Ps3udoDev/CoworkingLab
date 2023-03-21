@@ -8,10 +8,10 @@ const usersService = new usersServices()
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-  async up (queryInterface, Sequelize) {
-    const transaction = await queryInterface.sequelize.transaction()    
+  async up(queryInterface, Sequelize) {
+    const transaction = await queryInterface.sequelize.transaction()
     try {
-      const adminUser = await usersService.findUserByEmailOr404('example@academlo.com')
+      const adminUser = await usersService.findUserByEmailOr404('v.pseudo.11@gmail.com')
       const adminUser2 = await usersService.findUserByEmailOr404('example2@academlo.com')
       const adminRole = await rolesService.findRoleByName('admin')
       const profiles = [
@@ -28,8 +28,8 @@ module.exports = {
           updated_at: new Date(),
         },
       ]
-      
-      await queryInterface.bulkInsert('profiles', profiles , {transaction})
+
+      await queryInterface.bulkInsert('profiles', profiles, { transaction })
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
@@ -37,17 +37,25 @@ module.exports = {
     }
   },
 
-  async down (queryInterface, Sequelize) {
+  async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
 
     try {
-      const adminUser = await usersService.findUserByEmailOr404('example@academlo.com')
+      const adminUser = await usersService.findUserByEmailOr404('v.pseudo.11@gmail.com')
       const adminUser2 = await usersService.findUserByEmailOr404('example2@academlo.com')
       const adminRole = await rolesService.findRoleByName('admin')
-      
+
+      const userIds = [
+        adminUser.id, adminUser2.id
+      ]
+
       await queryInterface.bulkDelete('profiles', {
-        user_id: [adminUser.id, adminUser2.id],
-        role_id: adminRole.id
+        user_id: {
+          [Op.and]: userIds
+        },
+        role_id: {
+          [Op.and]: [adminRole.id]
+        }
       }, { transaction })
       await transaction.commit()
     } catch (error) {

@@ -3,8 +3,9 @@ const express = require('express')
 
 // const isAuthenticatedByPassportJwt = require('../libs/passport')
 
-const docsRouter = require('./docs.routes')
+const routesDocs = require('./docs.routes')
 const routesAuth = require('./auth.routes')
+const routesPublicationsTypes = require('./publication-types.routes')
 
 
 function routerModels(app) {
@@ -12,7 +13,8 @@ function routerModels(app) {
 
   app.use('/api/v1', router)
   router.use('/auth', routesAuth)
-  router.use('/docs', docsRouter)
+  router.use('/publications-types', routesPublicationsTypes)
+  router.use('/docs', routesDocs)
 }
 
 module.exports = routerModels
