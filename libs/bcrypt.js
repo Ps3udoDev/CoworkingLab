@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const {CustomError} = require('../utils/helpers')
+const { CustomError } = require('../utils/helpers')
 
 const hashPassword = (plainPassword) => {
   return bcrypt.hashSync(plainPassword, 8)

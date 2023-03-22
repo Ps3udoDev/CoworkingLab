@@ -40,7 +40,7 @@ const getPagination = (page, size, defaultSize = '10') => {
 
   if (page) {
     offset = offset.toString();
-  } 
+  }
 
   return { limit, offset };
 };

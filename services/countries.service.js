@@ -1,6 +1,6 @@
 const models = require('../database/models')
 const { Op } = require('sequelize')
-const  { CustomError }  = require('../utils/helpers')
+const { CustomError } = require('../utils/helpers')
 
 class CountriesService {
 
@@ -35,7 +35,7 @@ class CountriesService {
     return countries
   }
 
-  async createCountry({name}) {
+  async createCountry({ name }) {
     const transaction = await models.sequelize.transaction()
     try {
       let newCountry = await models.Countries.create({

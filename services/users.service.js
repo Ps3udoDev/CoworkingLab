@@ -1,7 +1,7 @@
-const {v4: uuid4} = require('uuid');
+const { v4: uuid4 } = require('uuid');
 const models = require('../database/models')
 const { Op } = require('sequelize')
-const  {CustomError}  = require('../utils/helpers');
+const { CustomError } = require('../utils/helpers');
 const { hashPassword } = require('../libs/bcrypt');
 
 class UsersService {
@@ -25,10 +25,20 @@ class UsersService {
       options.where.id = id
     }
 
-    const { name } = query
-    if (name) {
-      options.where.name = { [Op.iLike]: `%${name}%` }
-    }
+    const { first_name, last_name, email, username, email_verified, country_id, code_phone, phone, created_at } = query
+
+    const elapsedTime = Date.now();
+    const today = new Date(elapsedTime);
+    const date = new Date(created_at)
+    if (first_name) options.where.first_name = { [Op.iLike]: `%${first_name}%` }
+    if (last_name) options.where.last_name = { [Op.iLike]: `%${last_name}%` }
+    if (email) options.where.email = { [Op.iLike]: `%${email}%` }
+    if (username) options.where.username = { [Op.iLike]: `%${username}%` }
+    if (email_verified) options.where.email_verified = { [Op.between]: [new Date(email_verified), today.toISOString().slice(0, 10)] }
+    if (country_id) options.where.country_id = { [Op.eq]: country_id }
+    if (code_phone) options.where.code_phone = { [Op.iLike]: `%${code_phone}%` }
+    if (phone) options.where.phone = { [Op.iLike]: `%${phone}%` }
+    if (created_at) options.where.created_at = { [Op.between]: [new Date(created_at), today.toISOString().slice(0, 10)] }
 
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
@@ -43,11 +53,11 @@ class UsersService {
 
       obj.id = uuid4()
       obj.password = hashPassword(obj.password)
-      let newUser = await models.Users.create(obj, { transaction, fields: ['id','first_name', 'last_name', 'password', 'email', 'username'] })
-      
-      let publicRole = await models.Roles.findOne({where: {name:'public'}}, { raw: true })
+      let newUser = await models.Users.create(obj, { transaction, fields: ['id', 'first_name', 'last_name', 'password', 'email', 'username'] })
 
-      let newUserProfile = await models.Profiles.create({ user_id: newUser.id, role_id: publicRole.id}, {transaction})
+      let publicRole = await models.Roles.findOne({ where: { name: 'public' } }, { raw: true })
+
+      let newUserProfile = await models.Profiles.create({ user_id: newUser.id, role_id: publicRole.id }, { transaction })
 
       await transaction.commit()
       return newUser
@@ -56,8 +66,8 @@ class UsersService {
       throw error
     }
   }
-  
-  
+
+
   async getAuthUserOr404(id) {
     let user = await models.Users.scope('auth_flow').findByPk(id, { raw: true })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
@@ -70,9 +80,15 @@ class UsersService {
     return user
   }
 
+  async getUserByIdBasedOnScope(id, scope){
+    let user = await models.Users.scope(scope).findByPk(id, {raw:true})
+    if (!user) throw new CustomError('Not found User', 404, 'Not Found')
+    return user
+  }
+
   async findUserByEmailOr404(email) {
-    if(!email) throw new CustomError('Email not given', 400, 'Bad Request')
-    let user = await models.Users.findOne({where: {email}}, { raw: true })
+    if (!email) throw new CustomError('Email not given', 400, 'Bad Request')
+    let user = await models.Users.findOne({ where: { email } }, { raw: true })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }
@@ -120,7 +136,7 @@ class UsersService {
     }
   }
 
-  
+
   async removeTokenUser(id) {
     const transaction = await models.sequelize.transaction()
     try {
@@ -133,7 +149,7 @@ class UsersService {
       throw error
     }
   }
-  
+
   async verifiedTokenUser(id, token, exp) {
     const transaction = await models.sequelize.transaction()
     try {
@@ -141,7 +157,7 @@ class UsersService {
       if (!id) throw new CustomError('Not ID provided', 400, 'Bad Request')
       if (!token) throw new CustomError('Not token provided', 400, 'Bad Request')
       if (!exp) throw new CustomError('Not exp exist', 400, 'Bad Request')
-      
+
 
       let user = await models.Users.findOne({
         where: {

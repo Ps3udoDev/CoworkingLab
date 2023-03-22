@@ -9,18 +9,16 @@ const authService = new AuthService()
 const usersService = new UsersService()
 
 const logIn = async (request, response, next) => {
-    
+
   try {
-    
-    const { email, password } = request.body    
+
+    const { email, password } = request.body
     const user = await authService.checkUsersCredentials(email, password)
-    
+
     const token = jwt.sign({
       id: user.id,
       email: user.email,
-    }, process.env.JWT_SECRET_WORD,
-    { expiresIn: '24h' })
-
+    }, process.env.JWT_SECRET_WORD, { expiresIn: '24h' })
     return response.status(200).json({
       message: 'Correct Credentials',
       token
@@ -45,7 +43,7 @@ const signUp = async (request, response, next) => {
         text: 'Welcome Again!',
       })
     } catch (error) {
-      errors.push({errorName:'Error Sending Email', message:'Something went wrong with the Sender Email'})
+      errors.push({ errorName: 'Error Sending Email', message: 'Something went wrong with the Sender Email' })
     }
     return response
       .status(201)
@@ -64,13 +62,12 @@ const forgetPassword = async (request, response, next) => {
   try {
     let userAndToken = await authService.createRecoveryToken(email)
     let user = await usersService.setTokenUser(userAndToken.user.id, userAndToken.token)
-    
     try {
       await sender.sendMail({
         from: process.env.MAIL_SEND,
         to: user.email,
         subject: 'Restore Password',
-        html: `<span>${process.env.PASSWORD_RESET_DOMAIN}api/v1/auth/change-password/${userAndToken.token}</span>`
+        html: `<span>${process.env.PASSWORD_RESET_DOMAIN}/api/v1/auth/change-password/${userAndToken.token}</span>`
       })
     } catch (error) {
       throw new CustomError('Error Sending the Recovery email', 500, 'Application Error')
@@ -91,17 +88,17 @@ const restorePassword = async (request, response, next) => {
       throw new CustomError('Something went wrong deserializing the token', 401, 'Unauthorized')
     }
     await authService.changePassword(tokenInfo, password, request.params.token)
-    response.status(200).json({results: {message: 'update success'} })
+    response.status(200).json({ results: { message: 'update success' } })
   } catch (error) {
     next(error)
   }
 }
 
 const userToken = async (request, response, next) => {
-  try {    
+  try {
     let id = request.user.id
     let user = await authService.userToken(id)
-    return response.json({results:user})    
+    return response.json({ results: user })
   } catch (error) {
     next(error)
   }

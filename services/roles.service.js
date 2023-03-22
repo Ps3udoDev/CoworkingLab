@@ -1,6 +1,6 @@
 const models = require('../database/models')
 const { Op } = require('sequelize')
-const  {CustomError}  = require('../utils/helpers')
+const { CustomError } = require('../utils/helpers')
 
 class RolesService {
 
@@ -65,7 +65,7 @@ class RolesService {
   }
 
   async findRoleByName(name) {
-    let role = await models.Roles.findOne({where: {name}}, { raw: true })
+    let role = await models.Roles.findOne({ where: { name } }, { raw: true })
     return role
   }
 

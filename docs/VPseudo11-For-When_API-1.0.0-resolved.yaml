@@ -1,0 +1,373 @@
+---
+openapi: 3.0.0
+info:
+  title: For Wath? API
+  description: This is a simple API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+  x-contact:
+    name: Ps3udoDev
+    email: v.pseudo.11@gmail.com
+servers:
+  - url: http://localhost:9000/api/v1/
+    description: Development server
+tags:
+  - name: auth
+    description: Operations for registration and login
+paths:
+  /auth/sign-up:
+    post:
+      tags:
+        - auth
+      summary: allows you to register in the application
+      description: The user sends his personal data (name, lastname, email and password) to be able to register as a user of the application
+      operationId: authSignUp
+      requestBody:
+        $ref: "#/components/requestBodies/sign-up-req"
+      responses:
+        "201":
+          description: account created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: string
+                    example: Success Sign Up
+                  errors:
+                    type: array
+                    example: []
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaValidationError" 
+        "409":
+          description: conflict
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statusCode:
+                    type: integer
+                    example: 409
+                  name:
+                    type: string
+                    example: SequelizeUniqueConstraintError
+                  message:
+                    type: string
+                    example: llave duplicada viola restricción de unicidad «users_email_key»
+                  errors: 
+                    type: array
+                    example: []
+  /auth/login:
+    post:
+      tags:
+        - auth
+      summary: allows you to access and use the app
+      description: The user sends the email and his password to be able to receive a token with which he will make requests based on his ID
+      operationId: authLogin
+      requestBody:
+        $ref: "#/components/requestBodies/login-req"
+      responses:
+        "200":
+          description: correct credentials
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Correct Credentials!
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        "400":
+          description: Email not given or Password not provided for compare
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/errorName"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/errorName"
+        "404":
+          description: the user's email is not found in the database
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/errorName"
+  /auth/me:
+    get:
+      security: 
+        - JWT: []
+      tags:
+        - auth
+      summary: allows you to retrieve your profile
+      description: The user with his token will receive the Profiles associated with his account.
+      operationId: authMe
+      responses:
+        "200":
+          description: profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
+  /auth/forget-password:
+    post:
+      tags:
+        - auth
+      summary: allows you to recover your password
+      description: The user generates an email to recover his password in case he forgets it
+      operationId: authForgetPasword
+      requestBody:
+        $ref: "#/components/requestBodies/forget-password-req"
+      responses:
+        "200":
+          description: Email sended!, check your inbox
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Email sended!, check your inbox
+        "400":
+          description: Wrong request email is missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaValidationError"
+        "404":
+          description: the user's email is not found in the database
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/errorName"
+  /auth/change-password/{token}:
+    post:
+      tags:
+        - auth
+      summary: allows you to change your password
+      description: The token is sent along with the password to make the password change
+      operationId: authChangePassword
+      parameters:
+        - $ref: "#/components/parameters/token"
+      requestBody:
+        $ref: "#/components/requestBodies/change-password-req"
+      responses:
+        "200":
+          description: update password success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: update success
+        "400":
+          description: Wrong request password is missing
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SchemaValidationError"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorName"
+
+components:
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  parameters:
+    token:
+      name: token
+      in: path
+      description: password change token sent to email
+      required: true
+      schema:
+        type: string
+
+  schemas:
+    SchemaValidationError:
+      type: object
+      properties:
+        message:
+          type: string
+          example: Schema Validation Error
+        errorName:
+          type: string
+          example: Bad Request
+        details:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: \"*\" is required
+              path:
+                type: array
+                items:
+                  type: string
+                  example: '*'
+              type:
+                type: string
+                example: any.required
+              context:
+                type: object
+                properties:
+                  label: 
+                    type: string
+                    example: label
+                  key:
+                    type: string
+                    example: key
+    errorName:
+      type: object
+      properties:
+        message:
+          type: string
+          example: description of error
+        errorName:
+          type: string
+          example: name of error
+    Sign-Up:
+      type: object
+      required:
+        - first_name
+        - last_name
+        - email
+        - password
+      properties:
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+    Login:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    Forget-Password:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: example@example.com
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+        image_url:
+          type: string
+        profiles:
+          type: array
+          items:
+            type: object
+            properties:
+              id: 
+                type: string
+              user_id:
+                type: string
+              role_id:
+                type: integer
+                example: 1
+              created_at:
+                type: string
+              updated_at:
+                type: string
+  requestBodies:
+    sign-up-req:
+      description: parameters required to register in the system
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              first_name:
+                type: string
+              last_name:
+                type: string
+              email:
+                type: string
+              password:
+                type: string
+      required: true
+    login-req:
+      description: parameters required to login
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+              password:
+                type: string
+      required: true
+    forget-password-req:
+      description: parameters required to generate a new password in case of forget password
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                type: string
+      required: true
+    change-password-req:
+      description: New Password
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              password:
+                type: string
+      required: true

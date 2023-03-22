@@ -87,9 +87,9 @@ function ormErrorHandler(err, req, res, next) {
   }
 
   if (err instanceof QueryError ||
-      err instanceof UnknownConstraintError ||
-      err instanceof  AggregateError ||
-      err instanceof UniqueConstraintError) {
+    err instanceof UnknownConstraintError ||
+    err instanceof AggregateError ||
+    err instanceof UniqueConstraintError) {
     return res.status(409).json({
       statusCode: 409,
       name: err.name,
@@ -129,7 +129,7 @@ function ormErrorHandler(err, req, res, next) {
       parametros: err.parameters,
       // errorOriginal: err['original'],
       // sql: err['sql'],
-    //   stack: err.stack,
+      //   stack: err.stack,
     });
   }
 
