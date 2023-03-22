@@ -8,6 +8,8 @@ const routesAuth = require('./auth.routes')
 const routesUsers = require('./users.routes')
 const routesPublicationsTypes = require('./publication-types.routes')
 const routerCountries = require('./countries.routes')
+const routerStates = require('./states.routes')
+
 
 
 
@@ -19,7 +21,8 @@ function routerModels(app) {
   router.use('/users', routesUsers)
   router.use('/publications-types', routesPublicationsTypes)
   router.use('/countries', routerCountries)
-  router.use('/docs', routesDocs)
+  router.use('/states', routerStates)
+  router.use('/api-docs', routesDocs)
 }
 
 module.exports = routerModels

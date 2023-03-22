@@ -31,7 +31,7 @@ class CountriesService {
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
 
-    const countries = await models.Countries.findAndCountAll(options)
+    const countries = await models.Countries.scope('view_public').findAndCountAll(options)
     return countries
   }
 

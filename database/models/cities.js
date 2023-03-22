@@ -3,33 +3,32 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class States extends Model {
+  class Cities extends Model {
     static associate(models) {
-      States.belongsTo(models.Countries, { as: 'country', foreignKey: 'country_id' })
-      States.hasMany(models.Cities, { as: 'city', foreignKey: 'state_id' })
+      Cities.belongsTo(models.States, { as: 'state', foreignKey: 'state_id' })
     }
   }
-  States.init({
+  Cities.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true
     },
-    country_id: DataTypes.INTEGER,
+    state_id: DataTypes.INTEGER,
     name: DataTypes.STRING
   }, {
     sequelize,
-    modelName: 'States',
-    tableName: 'states',
+    modelName: 'Cities',
+    tableName: 'cities',
     underscored: true,
     timestamps: true,
     scopes: {
       view_public: {
-        attributes: ['id', 'country_id', 'name']
+        attributes: ['id', 'state_id', 'name']
       },
       no_timestamps: {
         attributes: { exclude: ['created_at', 'updated_at'] }
       },
     }
   });
-  return States;
+  return Cities;
 };
