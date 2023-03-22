@@ -34,7 +34,7 @@ class UsersService {
     if (last_name) options.where.last_name = { [Op.iLike]: `%${last_name}%` }
     if (email) options.where.email = { [Op.iLike]: `%${email}%` }
     if (username) options.where.username = { [Op.iLike]: `%${username}%` }
-    if (email_verified) options.where.email_verified = { [Op.gt]: email_verified, [Op.lt]: today.toLocaleDateString() }
+    if (email_verified) options.where.email_verified = { [Op.between]: [new Date(email_verified), today.toISOString().slice(0, 10)] }
     if (country_id) options.where.country_id = { [Op.eq]: country_id }
     if (code_phone) options.where.code_phone = { [Op.iLike]: `%${code_phone}%` }
     if (phone) options.where.phone = { [Op.iLike]: `%${phone}%` }
@@ -76,6 +76,12 @@ class UsersService {
 
   async getUser(id) {
     let user = await models.Users.findByPk(id)
+    if (!user) throw new CustomError('Not found User', 404, 'Not Found')
+    return user
+  }
+
+  async getUserByIdBasedOnScope(id, scope){
+    let user = await models.Users.scope(scope).findByPk(id, {raw:true})
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }

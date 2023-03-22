@@ -7,6 +7,8 @@ const routesDocs = require('./docs.routes')
 const routesAuth = require('./auth.routes')
 const routesUsers = require('./users.routes')
 const routesPublicationsTypes = require('./publication-types.routes')
+const routerCountries = require('./countries.routes')
+
 
 
 function routerModels(app) {
@@ -16,6 +18,7 @@ function routerModels(app) {
   router.use('/auth', routesAuth)
   router.use('/users', routesUsers)
   router.use('/publications-types', routesPublicationsTypes)
+  router.use('/countries', routerCountries)
   router.use('/docs', routesDocs)
 }
 

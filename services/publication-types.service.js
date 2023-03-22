@@ -48,12 +48,6 @@ class PublicationTypesServices {
     }
   }
 
-  async getAllPublicationsTypes() {
-    let publicationTypes = await models.PublicationsTypes.findAll()
-    if (!publicationTypes) throw new CustomError('Post types not found', 404, 'Not Found')
-    return publicationTypes
-  }
-
   //Return Instance if we do not converted to json (or raw:true)
   async getPublicationTypeOr404(id) {
     let publicationType = await models.PublicationsTypes.findByPk(id, { raw: true })
