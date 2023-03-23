@@ -2,7 +2,7 @@ const models = require('../database/models')
 const { Op } = require('sequelize')
 const { CustomError } = require('../utils/helpers')
 
-class StatesServices {
+class CitiesCervices {
   constructor() {
   }
 
@@ -30,56 +30,56 @@ class StatesServices {
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
 
-    const states = await models.States.scope('view_public').findAndCountAll(options)
-    return states
+    const cities = await models.Cities.scope('view_public').findAndCountAll(options)
+    return cities
   }
 
-  async createState(obj) {
+  async createCity(obj) {
     const transaction = await models.sequelize.transaction()
     try {
-      let newState = await models.States.create(obj, { transaction, fields: ['country_id', 'name'] })
+      let newCity = await models.Cities.create(obj, { transaction, fields: ['state_id', 'name'] })
       await transaction.commit()
-      return newState
+      return newCity
     } catch (error) {
       await transaction.rollback()
       throw error
     }
   }
 
-  async getStateOr404(id) {
-    let state = await models.States.scope('view_public').findByPk(id, { raw: true })
-    if (!state) throw new CustomError('Not found State', 404, 'Not Fount')
-    return state
+  async getCityOr404(id) {
+    let city = await models.Cities.scope('view_public').findByPk(id, { raw: true })
+    if (!city) throw new CustomError('Not found City', 404, 'Not Fount')
+    return city
   }
 
-  async getState(id) {
-    let state = await models.States.scope('view_public').findByPk(id)
-    if (!state) throw new CustomError('Not found State', 404, 'Not Fount')
-    return state
+  async getCity(id) {
+    let city = await models.Cities.scope('view_public').findByPk(id)
+    if (!city) throw new CustomError('Not found City', 404, 'Not Fount')
+    return city
   }
 
-  async updateState(id, obj) {
+  async updateCity(id, obj) {
     const transaction = await models.sequelize.transaction()
     try {
-      let state = await models.States.findByPk(id)
-      if (!state) throw new CustomError('Not fount State', 404, 'Not Found')
-      let updateState = await state.update(obj, { transaction })
+      let city = await models.Cities.findByPk(id)
+      if (!city) throw new CustomError('Not fount City', 404, 'Not Found')
+      let updateCity = await city.update(obj, { transaction })
       await transaction.commit()
-      return updateState
+      return updateCity
     } catch (error) {
       await transaction.rollback()
       throw error
     }
   }
 
-  async removeState(id) {
+  async removeCity(id) {
     const transaction = await models.sequelize.transaction()
     try {
-      let state = await models.States.findByPk(id)
-      if (!state) throw new CustomError('Not found State', 404, 'Not Found')
-      await state.destroy({ transaction })
+      let city = await models.Cities.findByPk(id)
+      if (!city) throw new CustomError('Not found City', 404, 'Not Found')
+      await city.destroy({ transaction })
       await transaction.commit()
-      return state
+      return city
     } catch (error) {
       await transaction.rollback()
       throw error
@@ -87,4 +87,4 @@ class StatesServices {
   }
 }
 
-module.exports = StatesServices
+module.exports = CitiesCervices
