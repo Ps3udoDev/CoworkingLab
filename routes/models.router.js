@@ -10,6 +10,7 @@ const routesPublicationsTypes = require('./publication-types.routes')
 const routerCountries = require('./countries.routes')
 const routerStates = require('./states.routes')
 const routerCities = require('./cities.routes')
+const routerRoles = require('./roles.routes')
 
 function routerModels(app) {
   const router = express.Router()
@@ -21,6 +22,7 @@ function routerModels(app) {
   router.use('/countries', routerCountries)
   router.use('/states', routerStates)
   router.use('/cities', routerCities)
+  router.use('/roles', routerRoles)
   router.use('/api-docs', routesDocs)
 }
 
