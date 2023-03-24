@@ -16,6 +16,10 @@ servers:
 tags:
   - name: auth
     description: Operations for registration and login
+  - name: User
+    description: User operations
+  - name: Publications Types
+    description: Publications Types operations
 paths:
   /auth/sign-up:
     post:
@@ -196,7 +200,206 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorName"
-
+  
+  /users:
+    get:
+      security: 
+        - JWT: []
+      tags:
+        - User
+      summary: allows to obtain the users
+      description: Only for users who are administrators, users can be filtered based on their fields, and their data type will define the search rule
+      operationId: userGetUser
+      parameters:
+        - name: id
+          in: query
+          description: id for user search using query
+          schema:
+            type: string
+        - name: first_name
+          in: query
+          description: first name for user search using query
+          schema:
+            type: string
+        - name: last_name
+          in: query
+          description: last name for user search using query
+          schema:
+            type: string
+        - name: email
+          in: query
+          description: email for user search using query
+          schema:
+            type: string
+        - name: username
+          in: query
+          description: username for user search using query
+          schema:
+            type: string
+        - name: email_verified
+          in: query
+          description: search for users by the date they verified their mail
+          schema:
+            type: string
+        - name: country_id
+          in: query
+          description: country id for user search using query
+          schema:
+            type: string
+        - name: code_phone
+          in: query
+          description: code phone for user search using query
+          schema:
+            type: string
+        - name: phone
+          in: query
+          description: phone for user search using query
+          schema:
+            type: string
+        - name: created_at
+          in: query
+          description: created_at for user search using query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          description: limit for user search using query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: offset for user search using query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
+  /users/{id}:
+    get:
+      security: 
+        - JWT: []
+      tags:
+        - User
+      summary: allows to obtain the users
+      description: Only for users who are administrators, users can be filtered based on their fields, and their data type will define the search rule
+      operationId: userGetUserById
+      parameters:
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
+    put:
+      security: 
+        - JWT: []
+      tags:
+        - User
+      summary: allows to obtain the users
+      description: Only for users who are administrators, users can be filtered based on their fields, and their data type will define the search rule
+      operationId: userPutUserById
+      parameters:
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        $ref: "#/components/requestBodies/change-password-req"
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
+  /publications-types:
+    get:
+      security: 
+        - JWT: []
+      tags:
+        - Publications Types
+      summary: allows to obtain the types of publications
+      description: Publication types can be filtered based on their fields, and their data type will define the search rule
+      operationId: publications-typesGetAll
+      parameters:
+      - name: limit
+        in: query
+        description: limit for user search using query
+        schema:
+          type: string
+      - name: offset
+        in: query
+        description: offset for user search using query
+        schema:
+          type: string
+      - name: id
+        in: query
+        description: id for user search using query
+        schema:
+          type: string
+      - name: name
+        in: query
+        description: name for user search using query
+        schema:
+          type: string
+      - name: description
+        in: query
+        description: description for user search using query
+        schema:
+          type: string   
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
+  /publications-types/{id}:
+    get:
+      security: 
+        - JWT: []
+      tags:
+        - Publications Types
+      summary: allows to obtain the types of publications
+      description: Publication types can be filtered based on their fields, and their data type will define the search rule
+      operationId: publications-typesGetAll
+      parameters:
+      - name: id
+        in: path
+        description: id for user search using query
+        required: true
+        schema:
+          type: string  
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Unauthorized
 components:
   securitySchemes:
     JWT:
@@ -210,6 +413,12 @@ components:
       in: path
       description: password change token sent to email
       required: true
+      schema:
+        type: string
+    usersQuerys:
+      name: id
+      in: query
+      description: id for user search using query
       schema:
         type: string
 
