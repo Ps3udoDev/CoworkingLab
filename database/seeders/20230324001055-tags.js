@@ -9,7 +9,7 @@ module.exports = {
       {
         id: 1,
         name: 'tag 1',
-        desciption: 'description tag1',
+        description: 'description tag1',
         image_url: 'url tag1',
         created_at: new Date(),
         updated_at: new Date(),
@@ -17,7 +17,7 @@ module.exports = {
       {
         id: 2,
         name: 'tag 2',
-        desciption: 'description tag2',
+        description: 'description tag2',
         image_url: 'url tag2',
         created_at: new Date(),
         updated_at: new Date(),
@@ -25,7 +25,7 @@ module.exports = {
       {
         id: 3,
         name: 'tag 3',
-        desciption: 'description tag3',
+        description: 'description tag3',
         image_url: 'url tag3',
         created_at: new Date(),
         updated_at: new Date(),
@@ -33,7 +33,7 @@ module.exports = {
       {
         id: 4,
         name: 'tag 4',
-        desciption: 'description tag5',
+        description: 'description tag5',
         image_url: 'url tag4',
         created_at: new Date(),
         updated_at: new Date(),

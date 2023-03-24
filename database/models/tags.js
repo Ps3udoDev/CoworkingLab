@@ -12,9 +12,10 @@ module.exports = (sequelize, DataTypes) => {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      autoIncrement:true,
     },
     name: DataTypes.STRING,
-    desciption: DataTypes.STRING,
+    description: DataTypes.STRING,
     image_url: DataTypes.STRING
   }, {
     sequelize,
