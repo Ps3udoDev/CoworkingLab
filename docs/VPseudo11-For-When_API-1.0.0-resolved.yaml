@@ -2,34 +2,47 @@
 openapi: 3.0.0
 info:
   title: For Wath? API
-  description: This is a simple API
+  description: La API REST del módulo de Desarrollo Pro Backend en Academlo es la herramienta perfecta para que los estudiantes de Front puedan interactuar de manera segura y eficiente con los diferentes features de la aplicación. Diseñada con los más altos estándares de seguridad y rendimiento, esta API permite a los estudiantes de Front probar todas las funcionalidades de la aplicación sin riesgos ni inconvenientes. Por otro lado, los estudiantes de Backend también podrán beneficiarse de esta API, ya que podrán utilizarla para verificar que las soluciones que desarrollen funcionen correctamente en un ambiente controlado y seguro. En resumen, la API REST del módulo de Desarrollo Pro Backend en Academlo es una herramienta esencial para todos los estudiantes que buscan aprender y mejorar sus habilidades en el desarrollo de aplicaciones web.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
-  x-contact:
+  contact:
     name: Ps3udoDev
     email: v.pseudo.11@gmail.com
 servers:
   - url: http://localhost:9000/api/v1/
     description: Development server
 tags:
-  - name: auth
-    description: Operations for registration and login
+  - name: Auth
+    description: Refers to user authentication in the API. It includes all the operations related to the management of access tokens, registration of new users and authentication of existing users.
   - name: User
-    description: User operations
+    description: It is in charge of managing the users in the API. Includes operations to modify and get users.
   - name: Publications Types
-    description: Publications Types operations
+    description: Refers to the different types of posts found in the API. It includes obtaining and modifying the types of publications.
+  - name: Countries
+    description: It is in charge of obtaining all the countries registered in the API
+  - name: States
+    description: It is in charge of obtaining all the states registered in the API
+  - name: Cities
+    description: It is in charge of obtaining all the cities registered in the API
+  - name: Roles
+    description: It is in charge of obtaining all the roles registered in the API
 paths:
   /auth/sign-up:
     post:
       tags:
-        - auth
+        - Auth
       summary: allows you to register in the application
       description: The user sends his personal data (name, lastname, email and password) to be able to register as a user of the application
       operationId: authSignUp
       requestBody:
-        $ref: "#/components/requestBodies/sign-up-req"
+        description: parameters required to register in the system
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Sign-Up"
+        required: true
       responses:
         "201":
           description: account created successfully
@@ -43,13 +56,14 @@ paths:
                     example: Success Sign Up
                   errors:
                     type: array
-                    example: []
+                    items:
+                      example: []
         "400":
           description: Bad Request
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SchemaValidationError" 
+                $ref: "#/components/schemas/SchemaValidationError"
         "409":
           description: conflict
           content:
@@ -66,18 +80,24 @@ paths:
                   message:
                     type: string
                     example: llave duplicada viola restricción de unicidad «users_email_key»
-                  errors: 
+                  errors:
                     type: array
-                    example: []
+                    items:
+                      example: []
   /auth/login:
     post:
       tags:
-        - auth
+        - Auth
       summary: allows you to access and use the app
       description: The user sends the email and his password to be able to receive a token with which he will make requests based on his ID
       operationId: authLogin
       requestBody:
-        $ref: "#/components/requestBodies/login-req"
+        description: parameters required to login
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Login"
+        required: true
       responses:
         "200":
           description: correct credentials
@@ -97,25 +117,25 @@ paths:
           content:
             application/json:
               schema:
-                 $ref: "#/components/schemas/errorName"
+                $ref: "#/components/schemas/errorName"
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                 $ref: "#/components/schemas/errorName"
+                $ref: "#/components/schemas/errorName"
         "404":
-          description: the user's email is not found in the database
+          description: The user's email is not found in the database
           content:
             application/json:
               schema:
-                 $ref: "#/components/schemas/errorName"
+                $ref: "#/components/schemas/errorName"
   /auth/me:
     get:
-      security: 
+      security:
         - JWT: []
       tags:
-        - auth
+        - Auth
       summary: allows you to retrieve your profile
       description: The user with his token will receive the Profiles associated with his account.
       operationId: authMe
@@ -125,18 +145,51 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                type: object
+                properties:
+                  id:
+                    type: string
+                  first_name:
+                    type: string
+                  last_name:
+                    type: string
+                  email:
+                    type: string
+                  username:
+                    type: string
+                  image_url:
+                    type: string
+                  profiles:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        user_id:
+                          type: string
+                        role_id:
+                          type: integer
+                          example: 1
+                        created_at:
+                          type: string
+                        updated_at:
+                          type: string
         "401":
           description: Unauthorized
   /auth/forget-password:
     post:
       tags:
-        - auth
+        - Auth
       summary: allows you to recover your password
       description: The user generates an email to recover his password in case he forgets it
       operationId: authForgetPasword
       requestBody:
-        $ref: "#/components/requestBodies/forget-password-req"
+        description: parameters required to generate a new password in case of forget password
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/Forget-Password"
       responses:
         "200":
           description: Email sended!, check your inbox
@@ -162,18 +215,23 @@ paths:
           content:
             application/json:
               schema:
-                 $ref: "#/components/schemas/errorName"
+                $ref: "#/components/schemas/errorName"
   /auth/change-password/{token}:
     post:
       tags:
-        - auth
+        - Auth
       summary: allows you to change your password
       description: The token is sent along with the password to make the password change
       operationId: authChangePassword
       parameters:
         - $ref: "#/components/parameters/token"
       requestBody:
-        $ref: "#/components/requestBodies/change-password-req"
+        description: new password
+        content: 
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Change-Password'
+        required: true
       responses:
         "200":
           description: update password success
@@ -200,10 +258,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorName"
-  
+
   /users:
     get:
-      security: 
+      security:
         - JWT: []
       tags:
         - User
@@ -213,54 +271,281 @@ paths:
       parameters:
         - name: id
           in: query
-          description: id for user search using query
+          description: retrieve users by id
           schema:
             type: string
         - name: first_name
           in: query
-          description: first name for user search using query
+          description: retrieves the users associated with the entered characters referring to their first name
           schema:
             type: string
         - name: last_name
           in: query
-          description: last name for user search using query
+          description: retrieves the users associated with the entered characters referring to their last name
           schema:
             type: string
         - name: email
           in: query
-          description: email for user search using query
+          description: retrieves the users associated with the entered characters referring to your mail
           schema:
             type: string
         - name: username
           in: query
-          description: username for user search using query
+          description: retrieves the users associated with the entered characters referring to their username
           schema:
             type: string
         - name: email_verified
           in: query
-          description: search for users by the date they verified their mail
+          description: search users by the date they verified their mail in relation to the current date
           schema:
             type: string
         - name: country_id
           in: query
-          description: country id for user search using query
+          description: search for users by their country id
           schema:
             type: string
         - name: code_phone
           in: query
-          description: code phone for user search using query
+          description: search for users by phone code
           schema:
             type: string
         - name: phone
           in: query
-          description: phone for user search using query
+          description: search for users by their phone number
           schema:
             type: string
         - name: created_at
           in: query
-          description: created_at for user search using query
+          description: search users by the date they created their account relative to the current date
           schema:
             type: string
+        - name: limit
+          in: query
+          description: limit of users that will be shown in each query
+          schema:
+            type: string
+        - name: offset
+          in: query
+          description: search offset, from which user started the search
+          schema:
+            type: string
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      users:
+                        type: object
+                        properties:
+                          count: 
+                            type: integer
+                            example: 1
+                          rows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
+                                first_name:
+                                  type: string
+                                  example: user
+                                last_name:
+                                  type: string
+                                  example: user
+                                email:
+                                  type: string
+                                  example: example@example@gmail.com
+                                username:
+                                  type: string
+                                  example: example@example@gmail.com
+                                password:
+                                  type: string
+                                  example: b$08$kx07j.y97XiyGaEQymM.eOLNJ
+                                email_verified:
+                                  type: string
+                                token:
+                                  type: string
+                                code_phone:
+                                  type: string
+                                  example: +593
+                                phone: 
+                                  type: string
+                                  example: 123456789
+                                country_id:
+                                  type: integer
+                                  example: 1
+                                image_url:
+                                  type: string
+                                created_at:
+                                  type: string
+                                  example: 2023-03-21T12:55:11.024z
+                                updated_at:
+                                  type: string
+                                  example: 2023-03-21T12:55:11.024Z
+
+        "401":
+          description: Unauthorized
+  /users/{id}:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: It allows to obtain a user based on the Id
+      description: Public information about a user will be seen, if the user looks at their same profile, they will be shown more complete fields
+      operationId: userGetUserById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: returns user in paged form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                   results:
+                    type: object
+                    properties:
+                      users:
+                        type: object
+                        properties:
+                          id: 
+                            type: string
+                            example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
+                          first_name:
+                            type: string
+                            example: user
+                          last_name:
+                            type: string
+                            example: user
+                          country_id:
+                            type: integer
+                            example: 1
+                          image_url:
+                            type: string
+
+        "401":
+          description: Unauthorized
+    put:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: The user will be able to edit their fields
+      description: Only the same user can change their profile
+      operationId: userPutUserById
+      parameters:
+        - name: id
+          in: path
+          description: user id to search
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: You can edit the fields that do not compromise authentication
+        content: 
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                first_name:
+                  type: string
+                last_name:
+                  type: string
+                code_phone:
+                  type: string
+                country_id:
+                  type: integer
+                phone:
+                  type: string
+                interests:
+                  type: string
+                  example: 1,2,4 (tag ids separated by commas)
+      responses:
+        "200":
+          description: returns users in a paginated manner
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      user: 
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
+                          first_name:
+                            type: string
+                            example: user
+                          last_name:
+                            type: string
+                            example: user
+                          email:
+                            type: string
+                            example: example@example@gmail.com
+                          username:
+                            type: string
+                            example: example@example@gmail.com
+                          password:
+                            type: string
+                            example: b$08$kx07j.y97XiyGaEQymM.eOLNJ
+                          email_verified:
+                            type: string
+                          token:
+                            type: string
+                          code_phone:
+                            type: string
+                            example: +593
+                          phone: 
+                            type: string
+                            example: 123456789
+                          country_id:
+                            type: integer
+                            example: 1
+                          image_url:
+                            type: string
+                          created_at:
+                            type: string
+                            example: 2023-03-21T12:55:11.024z
+                          updated_at:
+                            type: string
+                            example: 2023-03-21T12:55:11.024Z
+        "401":
+          description: Unauthorized
+        "404":
+          description: the user's email is not found in the database
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/errorName"
+  /publications-types:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Publications Types
+      summary: allows to obtain the types of publications
+      description: Publication types can be filtered based on their fields, and their data type will define the search rule
+      operationId: publications-typesGetAll
+      parameters:
         - name: limit
           in: query
           description: limit for user search using query
@@ -271,29 +556,19 @@ paths:
           description: offset for user search using query
           schema:
             type: string
-      responses:
-        "200":
-          description: returns users in a paginated manner
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
-          description: Unauthorized
-  /users/{id}:
-    get:
-      security: 
-        - JWT: []
-      tags:
-        - User
-      summary: allows to obtain the users
-      description: Only for users who are administrators, users can be filtered based on their fields, and their data type will define the search rule
-      operationId: userGetUserById
-      parameters:
         - name: id
-          in: path
+          in: query
           description: id for user search using query
-          required: true
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: name for user search using query
+          schema:
+            type: string
+        - name: description
+          in: query
+          description: description for user search using query
           schema:
             type: string
       responses:
@@ -302,102 +577,191 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
-          description: Unauthorized
-    put:
-      security: 
-        - JWT: []
-      tags:
-        - User
-      summary: allows to obtain the users
-      description: Only for users who are administrators, users can be filtered based on their fields, and their data type will define the search rule
-      operationId: userPutUserById
-      parameters:
-        - name: id
-          in: path
-          description: id for user search using query
-          required: true
-          schema:
-            type: string
-      requestBody:
-        $ref: "#/components/requestBodies/change-password-req"
-      responses:
-        "200":
-          description: returns users in a paginated manner
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserProfile"
-        "401":
-          description: Unauthorized
-  /publications-types:
-    get:
-      security: 
-        - JWT: []
-      tags:
-        - Publications Types
-      summary: allows to obtain the types of publications
-      description: Publication types can be filtered based on their fields, and their data type will define the search rule
-      operationId: publications-typesGetAll
-      parameters:
-      - name: limit
-        in: query
-        description: limit for user search using query
-        schema:
-          type: string
-      - name: offset
-        in: query
-        description: offset for user search using query
-        schema:
-          type: string
-      - name: id
-        in: query
-        description: id for user search using query
-        schema:
-          type: string
-      - name: name
-        in: query
-        description: name for user search using query
-        schema:
-          type: string
-      - name: description
-        in: query
-        description: description for user search using query
-        schema:
-          type: string   
-      responses:
-        "200":
-          description: returns users in a paginated manner
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: "#/components/schemas/Login"
         "401":
           description: Unauthorized
   /publications-types/{id}:
     get:
-      security: 
+      security:
         - JWT: []
       tags:
         - Publications Types
       summary: allows to obtain the types of publications
       description: Publication types can be filtered based on their fields, and their data type will define the search rule
-      operationId: publications-typesGetAll
+      operationId: publications_typesGetAll
       parameters:
-      - name: id
-        in: path
-        description: id for user search using query
-        required: true
-        schema:
-          type: string  
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
       responses:
         "200":
           description: returns users in a paginated manner
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/UserProfile"
+                $ref: "#/components/schemas/Login"
+        "401":
+          description: Unauthorized
+  /countries:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Countries
+      summary: allows you to obtain the available countries
+      description: Paginated view of all countries in the app
+      operationId: getCountries
+      responses:
+        '200':
+          description: returns countries in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      countries:
+                        type: object
+                        properties:
+                          count: 
+                            type: integer
+                            example: 1
+                          rows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id: 
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+        "401":
+          description: Unauthorized
+  /states:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - States
+      summary: allows you to obtain the available states
+      description: Paginated view of all states in the app
+      operationId: getStates
+      responses:
+        '200':
+          description: returns states in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      states:
+                        type: object
+                        properties:
+                          count: 
+                            type: integer
+                            example: 1
+                          rows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id: 
+                                  type: integer
+                                  example: 1
+                                country_id: 
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+        "401":
+          description: Unauthorized
+  /cities:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Cities
+      summary: allows you to obtain the available cities
+      description: Paginated view of all Cities in the app
+      operationId: getCities
+      responses:
+        '200':
+          description: returns cities in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      cities:
+                        type: object
+                        properties:
+                          count: 
+                            type: integer
+                            example: 1
+                          rows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id: 
+                                  type: integer
+                                  example: 1
+                                state_id: 
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+        "401":
+          description: Unauthorized
+  /roles:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Roles
+      summary: allows you to obtain the available roles
+      description: Paginated view of all Roles in the app
+      operationId: getRoles
+      responses:
+        '200':
+          description: returns roles in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      roles:
+                        type: object
+                        properties:
+                          count: 
+                            type: integer
+                            example: 1
+                          rows:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                id: 
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+                                  example: public
         "401":
           description: Unauthorized
 components:
@@ -411,7 +775,7 @@ components:
     token:
       name: token
       in: path
-      description: password change token sent to email
+      description: token sent to mail
       required: true
       schema:
         type: string
@@ -423,49 +787,6 @@ components:
         type: string
 
   schemas:
-    SchemaValidationError:
-      type: object
-      properties:
-        message:
-          type: string
-          example: Schema Validation Error
-        errorName:
-          type: string
-          example: Bad Request
-        details:
-          type: array
-          items:
-            type: object
-            properties:
-              message:
-                type: string
-                example: \"*\" is required
-              path:
-                type: array
-                items:
-                  type: string
-                  example: '*'
-              type:
-                type: string
-                example: any.required
-              context:
-                type: object
-                properties:
-                  label: 
-                    type: string
-                    example: label
-                  key:
-                    type: string
-                    example: key
-    errorName:
-      type: object
-      properties:
-        message:
-          type: string
-          example: description of error
-        errorName:
-          type: string
-          example: name of error
     Sign-Up:
       type: object
       required:
@@ -500,83 +821,53 @@ components:
         email:
           type: string
           example: example@example.com
-    UserProfile:
+    Change-Password:
+      type: object
+      required:
+        - password
+      properties:
+        password:
+          type: string
+    SchemaValidationError:
       type: object
       properties:
-        id:
+        message:
           type: string
-        first_name:
+          example: Schema Validation Error
+        errorName:
           type: string
-        last_name:
-          type: string
-        email:
-          type: string
-        username:
-          type: string
-        image_url:
-          type: string
-        profiles:
+          example: Bad Request
+        details:
           type: array
           items:
             type: object
             properties:
-              id: 
+              message:
                 type: string
-              user_id:
+                example: \"*\" is required
+              path:
+                type: array
+                items:
+                  type: string
+                  example: "*"
+              type:
                 type: string
-              role_id:
-                type: integer
-                example: 1
-              created_at:
-                type: string
-              updated_at:
-                type: string
-  requestBodies:
-    sign-up-req:
-      description: parameters required to register in the system
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              first_name:
-                type: string
-              last_name:
-                type: string
-              email:
-                type: string
-              password:
-                type: string
-      required: true
-    login-req:
-      description: parameters required to login
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-              password:
-                type: string
-      required: true
-    forget-password-req:
-      description: parameters required to generate a new password in case of forget password
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              email:
-                type: string
-      required: true
-    change-password-req:
-      description: New Password
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              password:
-                type: string
-      required: true
+                example: any.required
+              context:
+                type: object
+                properties:
+                  label:
+                    type: string
+                    example: label
+                  key:
+                    type: string
+                    example: key
+    errorName:
+      type: object
+      properties:
+        message:
+          type: string
+          example: description of error
+        errorName:
+          type: string
+          example: name of error

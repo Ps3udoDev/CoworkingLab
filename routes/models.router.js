@@ -17,6 +17,7 @@ function routerModels(app) {
   const router = express.Router()
 
   app.use('/api/v1', router)
+  app.use('/api-docs', routesDocs)
   router.use('/auth', routesAuth)
   router.use('/users', routesUsers)
   router.use('/publications-types', routesPublicationsTypes)
@@ -25,7 +26,6 @@ function routerModels(app) {
   router.use('/states', routerStates)
   router.use('/cities', routerCities)
   router.use('/roles', routerRoles)
-  router.use('/api-docs', routesDocs)
 }
 
 module.exports = routerModels
