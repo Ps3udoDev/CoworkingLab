@@ -5,9 +5,10 @@ const userServices = new UsersService()
 
 const getAllUsers = async (req, res, next) => {
   try {
-    const { first_name, last_name, email, username, email_verified, country_id, code_phone, phone, created_at, limit, offset, id } = req.query
-    const users = await userServices.findAndCount({ first_name, last_name, email, username, email_verified, country_id, code_phone, phone, created_at, limit, offset, id })
-    return res.status(200).json({ results: { users: users } })
+    const query = req.query
+    const users = await userServices.findAndCount(query)
+    const { count, currentPage, totalPages, results } = users
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
   } catch (error) {
     next(error)
   }

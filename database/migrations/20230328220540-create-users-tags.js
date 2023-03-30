@@ -3,7 +3,7 @@ module.exports = {
   up: async (queryInterface, Sequelize) => {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.createTable('publication_tags', {
+      await queryInterface.createTable('users_tags', {
         tag_id: {
           type: Sequelize.INTEGER,
           allowNull: false,
@@ -16,13 +16,13 @@ module.exports = {
           onUpdate: 'CASCADE',
           onDelete: 'RESTRICT'
         },
-        publication_id: {
+        user_id: {
           type: Sequelize.UUID,
           allowNull: false,
           foreignKey: true,
           primaryKey: true,
           references: {
-            model: 'publications',
+            model: 'users',
             key: 'id'
           },
           onUpdate: 'CASCADE',
@@ -46,12 +46,11 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction()
     try {
-      await queryInterface.dropTable('publication_tags', { transaction });
+      await queryInterface.dropTable('users_tags', { transaction });
       await transaction.commit()
     } catch (error) {
       await transaction.rollback()
       throw error
     }
-
   }
 };

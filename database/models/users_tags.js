@@ -3,32 +3,32 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class PublicationTags extends Model {
+  class UsersTags extends Model {
     static associate(models) {
-      PublicationTags.belongsTo(models.Tags, { as: 'tags', foreignKey: 'tag_id' })
-      PublicationTags.belongsTo(models.Publications, { as: 'publications', foreignKey: 'publication_id' })
+      UsersTags.belongsTo(models.Tags, { as: 'tags', foreignKey: 'tag_id' })
+      UsersTags.belongsTo(models.Users, { as: 'users', foreignKey: 'user_id' })
     }
   }
-  PublicationTags.init({
+  UsersTags.init({
     tag_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
     },
-    publication_id: {
+    user_id: {
       type: DataTypes.UUID,
       allowNull: false,
       primaryKey: true,
-    },
+    }
   }, {
     sequelize,
-    modelName: 'PublicationTags',
-    tableName: 'publication_tags',
+    modelName: 'UsersTags',
+    tableName: 'users_tags',
     underscored: true,
     timestamps: true,
     scopes: {
       no_timestamps: { attributes: { exclude: ['created_at', 'updated_at'] } }
     }
   });
-  return PublicationTags
+  return UsersTags;
 };

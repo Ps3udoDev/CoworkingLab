@@ -14,10 +14,11 @@ class UsersService {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    console.log(size, page, query)
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -29,7 +30,6 @@ class UsersService {
 
     const elapsedTime = Date.now();
     const today = new Date(elapsedTime);
-    const date = new Date(created_at)
     if (first_name) options.where.first_name = { [Op.iLike]: `%${first_name}%` }
     if (last_name) options.where.last_name = { [Op.iLike]: `%${last_name}%` }
     if (email) options.where.email = { [Op.iLike]: `%${email}%` }
@@ -44,7 +44,19 @@ class UsersService {
     options.distinct = true
 
     const users = await models.Users.findAndCountAll(options)
-    return users
+
+    const totalPages = size === 0 ? 1 : Math.ceil(users.count / (size ? size : users.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : users.count);
+    const endIndex = startIndex + Number(size ? size : users.count);
+
+    const results = page > totalPages ? [] : users.rows.slice(startIndex, endIndex)
+    
+    return {
+      count: users.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createAuthUser(obj) {
@@ -80,8 +92,8 @@ class UsersService {
     return user
   }
 
-  async getUserByIdBasedOnScope(id, scope){
-    let user = await models.Users.scope(scope).findByPk(id, {raw:true})
+  async getUserByIdBasedOnScope(id, scope) {
+    let user = await models.Users.scope(scope).findByPk(id, { raw: true })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }
