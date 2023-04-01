@@ -17,10 +17,8 @@ const postPublication = async (req, res, next) => {
   try {
     const user_id = req.user.id
     const { publication_type_id, city_id, title, description, content, reference_link, tags } = req.body
-    console.log(publication_type_id, city_id, title, description, content, reference_link, tags)
-    if (publication_type_id && city_id && title && description && content && reference_link) {
-      console.log('enter to controller')
-      const newPublication = await publicarionServices.createPublication({ user_id, publication_type_id, city_id, title, description, content, reference_link, tags })
+    if (publication_type_id && city_id && title && description && content && reference_link && tags) {
+      const newPublication = await publicarionServices.createPublication({ user_id, publication_type_id, city_id, title, description, content, reference_link },tags)
       return res.status(201).json({results: {publication: newPublication}})
     } else {
       throw new CustomError('Missing Data', 404, 'Not Found')
@@ -44,9 +42,27 @@ const getPublicationById = async (req, res, next) => {
   }
 }
 
+const deletePublication = async (req, res, next)=>{
+  try {
+    const id = req.params.id
+    const userId = req.user.id
+    try {
+      console.log(id)
+      const publication = await publicarionServices.removePublication(id, userId)
+      return res.status(200).json({ results: { publication: publication } })
+    } catch (error) {
+      throw new CustomError('Not found Publication', 404, 'Not Found')
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+
 
 module.exports = {
   getAllPublications,
   postPublication,
   getPublicationById,
+  deletePublication
 }

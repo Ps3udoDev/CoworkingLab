@@ -14,7 +14,7 @@ module.exports = {
             key: 'id'
           },
           onUpdate: 'CASCADE',
-          onDelete: 'RESTRICT'
+          onDelete: 'CASCADE'
         },
         publication_id: {
           type: Sequelize.UUID,
@@ -26,7 +26,7 @@ module.exports = {
             key: 'id'
           },
           onUpdate: 'CASCADE',
-          onDelete: 'RESTRICT'
+          onDelete: 'CASCADE'
         },
         created_at: {
           allowNull: false,

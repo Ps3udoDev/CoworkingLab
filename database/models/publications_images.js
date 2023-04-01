@@ -3,12 +3,12 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class Publications_Images extends Model {
+  class PublicationsImages extends Model {
     static associate(models) {
-      Publications_Images.belongsTo(models.Publications, { as: 'publications', foreignKey: 'publication_id' })
+      PublicationsImages.belongsTo(models.Publications, { as: 'publications', foreignKey: 'publication_id' })
     }
   }
-  Publications_Images.init({
+  PublicationsImages.init({
     publication_id: {
       type: DataTypes.UUID,
       allowNull: false,
@@ -33,5 +33,5 @@ module.exports = (sequelize, DataTypes) => {
       no_timestamps: { attributes: { exclude: ['created_at', 'updated_at'] } }
     }
   });
-  return Publications_Images;
+  return PublicationsImages;
 };

@@ -1,7 +1,8 @@
 const { v4: uuid4 } = require('uuid');
 const models = require('../database/models')
 const { Op, cast, literal } = require('sequelize')
-const { CustomError } = require('../utils/helpers')
+const { CustomError } = require('../utils/helpers');
+const publications = require('../database/models/publications');
 
 class PublicationsServices {
   constructor() {
@@ -15,9 +16,27 @@ class PublicationsServices {
           [cast(literal(
             `(SELECT COUNT(*) FROM "votes" 
               WHERE "votes"."publication_id" = "Publications"."id")`
-          ), 'integer'), 'votes_count']
+          ), 'integer'), 'votes_count'],
         ]
-      }
+      },
+      include: [
+        /* {
+          model: models.Users,
+          as: 'user',
+          attributes: ['first_name', 'last_name', 'image_url']
+        },
+        {
+          model: models.PublicationsTypes,
+          as: 'publication_types'
+        },
+        {
+          model: models.Tags,
+          as: 'tags',
+          through: {
+            attributes: []
+          }
+        } */
+      ]
     }
 
     const { limit, offset, tags } = query
@@ -39,16 +58,28 @@ class PublicationsServices {
 
     options.distinct = true
 
-    const publications = await models.Publications.findAndCountAll(options)
+    const publications = await models.Publications.scope('votes_count').findAndCountAll(options)
     return publications
   }
 
-  async createPublication(obj) {
+  async createPublication(obj, tags) {
     const transaction = await models.sequelize.transaction()
     try {
       obj.id = uuid4()
       let newPublication = await models.Publications.create(obj, { transaction, fields: ['id', 'user_id', 'publication_type_id', 'city_id', 'title', 'description', 'content', 'reference_link'] })
-      let newVote = await models.Votes.create({ publication_id: newPublication.id, user_id: newPublication.user_id }, { transaction })
+      await models.Votes.create({ publication_id: newPublication.id, user_id: newPublication.user_id }, { transaction })
+      if (tags) {
+        let tagsIds = tags.split(',')
+        let findedTags = await models.Tags.findAll({
+          where: { id: tagsIds },
+          attributes: ['id'],
+          raw: true,
+        })
+        if (findedTags.length > 0) {
+          let tags_ids = findedTags.map(tag => tag['id'])
+          await newPublication.setTags(tags_ids, { transaction })
+        }
+      }
       await transaction.commit()
       return newPublication
     } catch (error) {
@@ -69,15 +100,20 @@ class PublicationsServices {
     return publication
   }
 
-  async removePublication(id) {
+  async removePublication(id, user_id) {
     const transaction = await models.sequelize.transaction()
     try {
-      let publication = await models.Publication.findByPk(id)
+      let publication = await models.Publications.findByPk(id)
       if (!publication) throw new CustomError('Not found publication', 404, 'Not Found')
-      await publication.destroy({ transaction })
+      if (publication.user_id === user_id) {
+        await publication.destroy({ transaction })
+      } else {
+        throw new CustomError('Esta publication no te pertenece', 400, 'Bad Request')
+      }
       await transaction.commit()
       return publication
     } catch (error) {
+      console.log(error)
       await transaction.rollback()
       throw error
     }
