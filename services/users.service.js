@@ -15,7 +15,7 @@ class UsersService {
     }
 
     const { size, page } = query
-    console.log(size, page, query)
+
     if (size && page) {
       options.size = size
       options.page = page

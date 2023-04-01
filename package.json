@@ -7,7 +7,9 @@
   "scripts": {
     "lint": "eslint .",
     "dev": "nodemon index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "test": "jest --detectOpenHandles",
+    "pretest": "npx sequelize-cli db:drop --env test && npx sequelize-cli db:create --env test && npx sequelize-cli db:migrate --env test && npx sequelize-cli db:seed:all --env test --seeders-path tests/seeders"
   },
   "author": "",
   "license": "ISC",

@@ -12,10 +12,10 @@ class TagsServices {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -30,8 +30,18 @@ class TagsServices {
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
 
-    const tags = await models.Tags.scope('no_timestamps').findAndCountAll(options)
-    return tags
+    const tags = await models.Tags.findAndCountAll(options)
+    const totalPages = size === 0 ? 1 : Math.ceil(tags.count / (size ? size : tags.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : tags.count);
+    const endIndex = startIndex + Number(size ? size : tags.count);
+
+    const results = page > totalPages ? [] : tags.rows.slice(startIndex, endIndex)
+    return {
+      count: tags.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createTag(obj) {

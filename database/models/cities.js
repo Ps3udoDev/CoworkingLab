@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
     timestamps: true,
     scopes: {
       view_public: {
-        attributes: ['id', 'state_id', 'name']
+        attributes: ['id', 'state_id', 'name', 'created_at', 'updated_at']
       },
       no_timestamps: {
         attributes: { exclude: ['created_at', 'updated_at'] }

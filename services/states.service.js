@@ -11,10 +11,10 @@ class StatesServices {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -31,7 +31,17 @@ class StatesServices {
     options.distinct = true
 
     const states = await models.States.scope('view_public').findAndCountAll(options)
-    return states
+    const totalPages = size === 0 ? 1 : Math.ceil(states.count / (size ? size : states.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : states.count);
+    const endIndex = startIndex + Number(size ? size : states.count);
+
+    const results = page > totalPages ? [] : states.rows.slice(startIndex, endIndex)
+    return {
+      count: states.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createState(obj) {

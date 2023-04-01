@@ -5,9 +5,10 @@ const countrieServices = new CountriesService()
 
 const getAllCountries = async (req, res, next) => {
   try {
-    const { limit, offset, id, name } = req.query
-    const countries = await countrieServices.findAndCount({ limit, offset, id, name })
-    return res.status(200).json({ results: { countries: countries } })
+    const { size, page, id, name } = req.query
+    const countries = await countrieServices.findAndCount({ size, page, id, name })
+    const { count, currentPage, totalPages, results } = countries
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
   } catch (error) {
     next(error)
   }

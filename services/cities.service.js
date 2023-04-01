@@ -11,10 +11,10 @@ class CitiesCervices {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -31,7 +31,17 @@ class CitiesCervices {
     options.distinct = true
 
     const cities = await models.Cities.scope('view_public').findAndCountAll(options)
-    return cities
+    const totalPages = size === 0 ? 1 : Math.ceil(cities.count / (size ? size : cities.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : cities.count);
+    const endIndex = startIndex + Number(size ? size : cities.count);
+
+    const results = page > totalPages ? [] : cities.rows.slice(startIndex, endIndex)
+    return {
+      count: cities.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createCity(obj) {

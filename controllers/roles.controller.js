@@ -5,9 +5,10 @@ const rolesServices = new RolesService()
 
 const getAllRoles = async (req, res, next) => {
   try {
-    const { limit, offset, id, name } = req.query
-    const roles = await rolesServices.findAndCount({ limit, offset, id, name })
-    return res.status(200).json({ results: { roles: roles } })
+    const { size, page, id, name } = req.query
+    const roles = await rolesServices.findAndCount({ size, page, id, name })
+    const { count, currentPage, totalPages, results } = roles
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
   } catch (error) {
     next(error)
   }

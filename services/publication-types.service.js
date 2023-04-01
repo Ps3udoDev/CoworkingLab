@@ -11,10 +11,10 @@ class PublicationTypesServices {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -30,7 +30,17 @@ class PublicationTypesServices {
     options.distinct = true
 
     const publicationTypes = await models.PublicationsTypes.findAndCountAll(options)
-    return publicationTypes
+    const totalPages = size === 0 ? 1 : Math.ceil(publicationTypes.count / (size ? size : publicationTypes.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : publicationTypes.count);
+    const endIndex = startIndex + Number(size ? size : publicationTypes.count);
+
+    const results = page > totalPages ? [] : publicationTypes.rows.slice(startIndex, endIndex)
+    return {
+      count: publicationTypes.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createPublicationType(obj) {

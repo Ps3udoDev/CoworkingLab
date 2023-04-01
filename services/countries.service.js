@@ -12,10 +12,10 @@ class CountriesService {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -32,7 +32,17 @@ class CountriesService {
     options.distinct = true
 
     const countries = await models.Countries.scope('view_public').findAndCountAll(options)
-    return countries
+    const totalPages = size === 0 ? 1 : Math.ceil(countries.count / (size ? size : countries.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : countries.count);
+    const endIndex = startIndex + Number(size ? size : countries.count);
+
+    const results = page > totalPages ? [] : countries.rows.slice(startIndex, endIndex)
+    return {
+      count: countries.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createCountry({ name }) {
