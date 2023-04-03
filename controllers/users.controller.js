@@ -1,9 +1,11 @@
 const ProfilesService = require('../services/profiles.service')
+const PublicationsServices = require('../services/publications.service')
 const UsersService = require('../services/users.service')
 const { CustomError } = require('../utils/helpers')
 
 const userServices = new UsersService()
 const profileServices = new ProfilesService()
+const publicationsServices = new PublicationsServices()
 
 
 const getAllUsers = async (req, res, next) => {
@@ -24,7 +26,7 @@ const getUserById = async (req, res, next) => {
     const admin = await profileServices.findProfileByUserID(myUserId)
     try {
       let scope = 'view_another_public'
-      if(admin.role_id===2) scope = 'view_another_admin'
+      if (admin.role_id === 2) scope = 'view_another_admin'
       if (myUserId === id) scope = 'view_same_user'
       const user = await userServices.getUserByIdBasedOnScope(id, scope)
       return res.status(200).json({ results: user })
@@ -44,7 +46,7 @@ const putUser = async (req, res, next) => {
   try {
     if (myUserId === id) {
 
-      if (first_name && last_name  && code_phone && phone) {
+      if (first_name && last_name && code_phone && phone) {
         const user = await userServices.updateUser(id, { first_name, last_name, code_phone, phone, interests })
         return res.status(200).json({ results: { user: user } })
       } else {
@@ -58,8 +60,32 @@ const putUser = async (req, res, next) => {
   }
 }
 
+const getPublicationsByUserVotes = async (req, res, next) => {
+  const id = req.params.id
+  try {
+    const publications = await publicationsServices.getPublicationsByUserVotes(id)
+    const { count, currentPage, totalPages, results } = publications
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
+  } catch (error) {
+    next(error)
+  }
+}
+
+const getUserPublications = async (req, res, next) => {
+  const id = req.params.id
+  try {
+    const publications = await publicationsServices.getUserPublications(id)
+    const { count, currentPage, totalPages, results } = publications
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
+  } catch (error) {
+    next(error)
+  }
+}
+
 module.exports = {
   getAllUsers,
   getUserById,
-  putUser
+  putUser,
+  getPublicationsByUserVotes,
+  getUserPublications
 }

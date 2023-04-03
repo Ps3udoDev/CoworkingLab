@@ -1,7 +1,9 @@
+const ProfilesService = require('../services/profiles.service')
 const PublicationsServices = require('../services/publications.service')
 const { CustomError } = require('../utils/helpers')
 
 const publicarionServices = new PublicationsServices()
+const profileServices = new ProfilesService()
 
 const getAllPublications = async (req, res, next) => {
   try {
@@ -43,14 +45,32 @@ const getPublicationById = async (req, res, next) => {
   }
 }
 
+const postVotePublication = async (req, res, next)=>{
+  try {
+    const userId = req.user.id
+    const publicationId = req.params.id
+    const publicationVote = await publicarionServices.toggleVote(publicationId, userId)
+    const {status, publication} = publicationVote
+    return res.status(status).json({message: 'voto añadido', publication})
+  } catch (error) {
+    next(error)
+  }
+}
+
 const deletePublication = async (req, res, next) => {
   try {
     const id = req.params.id
     const userId = req.user.id
+    const admin = await profileServices.findProfileByUserID(userId)
     try {
-      console.log(id)
-      const publication = await publicarionServices.removePublication(id, userId)
-      return res.status(200).json({ results: { publication: publication } })
+      let publication = await publicarionServices.getPublication(id)
+
+      if (publication.user_id === userId || admin.role_id === 2) {
+        publication = await publicarionServices.removePublication(id)
+        res.status(200).json({ results: publication })
+      } else {
+        return res.status(403).json({ message: 'Esta publication no te pertenece' })
+      }
     } catch (error) {
       throw new CustomError('Not found Publication', 404, 'Not Found')
     }
@@ -65,5 +85,6 @@ module.exports = {
   getAllPublications,
   postPublication,
   getPublicationById,
-  deletePublication
+  deletePublication,
+  postVotePublication
 }

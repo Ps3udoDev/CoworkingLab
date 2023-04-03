@@ -32,7 +32,8 @@ class PublicationsServices {
     if (id) {
       options.where.id = id
     }
-    const { publication_type_id, title, description, content, reference_link } = query
+    const { user_id, publication_type_id, title, description, content, reference_link } = query
+    if (user_id) options.where.user_id = user_id
     if (publication_type_id) options.where.publication_type_id = { [Op.eq]: publication_type_id }
     if (title) options.where.title = { [Op.iLike]: `%${title}%` }
     if (description) options.where.description = { [Op.iLike]: `%${description}%` }
@@ -125,16 +126,12 @@ class PublicationsServices {
     return publication
   }
 
-  async removePublication(id, user_id) {
+  async removePublication(id) {
     const transaction = await models.sequelize.transaction()
     try {
       let publication = await models.Publications.findByPk(id)
       if (!publication) throw new CustomError('Not found publication', 404, 'Not Found')
-      if (publication.user_id === user_id) {
-        await publication.destroy({ transaction })
-      } else {
-        throw new CustomError('Esta publication no te pertenece', 400, 'Bad Request')
-      }
+      await publication.destroy({ transaction })
       await transaction.commit()
       return publication
     } catch (error) {
@@ -144,36 +141,85 @@ class PublicationsServices {
     }
   }
 
-  async addVote(publicationId, userId) {
+  async toggleVote(publicationId, userId) {
     const transaction = await models.sequelize.transaction()
     try {
       const publication = await this.getPublicationOr404(publicationId)
       const vote = await models.Votes.findOne({ where: { publication_id: publicationId, user_id: userId } })
+      let status = 200
       if (vote) {
-        throw new CustomError('User has already voted for this publication', 400, 'Bad Request')
+        await vote.destroy()
+        publication.votes_count -= 1
+      } else {
+        await models.Votes.create({ publication_id: publicationId, user_id: userId })
+        publication.votes_count += 1
+        status = 201
       }
-      await models.Votes.create({ publication_id: publicationId, user_id: userId })
-      publication.votes_count += 1
       await transaction.commit()
-      return publication
+      return {
+        status,
+        publication
+      }
     } catch (error) {
       await transaction.rollback()
       throw error
     }
   }
 
-  async removeVote(publicationId, userId) {
+  async getPublicationsByUserVotes(userId) {
     const transaction = await models.sequelize.transaction()
     try {
-      const publication = await this.getPublicationOr404(publicationId)
-      const vote = await models.Votes.findOne({ where: { publication_id: publicationId, user_id: userId } })
-      if (!vote) {
-        throw new CustomError('User has not voted for this publication', 400, 'Bad Request')
+      const userVotes = await models.Votes.findAll({
+        where: {
+          user_id: userId
+        }
+      })
+
+      let publications = await this.findAndCount({ id: userVotes.publication_id })
+      let { count, totalPages, currentPage, results } = publications
+      let pagination = {
+        count: 0,
+        totalPages: 0,
+        currentPage: 0,
+        results: []
       }
-      await vote.destroy()
-      publication.votes_count -= 1
+      if (userVotes.length > 0) {
+        pagination = {
+          count,
+          totalPages,
+          currentPage,
+          results
+        }
+      }
       await transaction.commit()
-      return publication
+      return pagination
+    } catch (error) {
+      await transaction.rollback()
+      throw error
+    }
+  }
+
+  async getUserPublications(userId) {
+    const transaction = await models.sequelize.transaction()
+    try {
+      const publications = await this.findAndCount({ user_id: userId })
+      let { count, totalPages, currentPage, results } = publications
+      let pagination = {
+        count: 0,
+        totalPages: 0,
+        currentPage: 0,
+        results: []
+      }
+      if (publications.count > 0) {
+        pagination = {
+          count,
+          totalPages,
+          currentPage,
+          results
+        }
+      }
+      await transaction.commit()
+      return pagination
     } catch (error) {
       await transaction.rollback()
       throw error
