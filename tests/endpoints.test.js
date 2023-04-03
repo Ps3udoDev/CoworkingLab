@@ -74,7 +74,7 @@ test("Get Paginated Countries - Admin", async () => {
   const countriesAsAdmin = await request(app)
     .get("/api/v1/countries")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(countriesAsAdmin.status).toBe(200);
   expect(countriesAsAdmin.body.results).toEqual({
     count: 1,
@@ -124,7 +124,7 @@ test("Get Paginated States - Admin", async () => {
   const statesAsAdmin = await request(app)
     .get("/api/v1/states")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(statesAsAdmin.status).toBe(200);
   expect(statesAsAdmin.body.results).toEqual({
     count: 1,
@@ -147,7 +147,7 @@ test("Get Paginated States - Public", async () => {
   const statesAsPublic = await request(app)
     .get("/api/v1/states")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(statesAsPublic.status).toBe(200);
   expect(statesAsPublic.body.results).toEqual({
     count: 1,
@@ -177,7 +177,7 @@ test("Get Paginated Cities - Admin", async () => {
   const citiesAsAdmin = await request(app)
     .get("/api/v1/cities")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(citiesAsAdmin.status).toBe(200);
   expect(citiesAsAdmin.body.results).toEqual({
     count: 1,
@@ -258,7 +258,7 @@ test("Get Paginated Roles - Public ", async () => {
   const rolesAsPublic = await request(app)
     .get("/api/v1/roles")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(rolesAsPublic.status).toBe(200);
   expect(rolesAsPublic.body.results).toEqual({
     count: 2,
@@ -293,7 +293,7 @@ test("Get Paginated Tags - Admin", async () => {
   const tagsAsAdmin = await request(app)
     .get("/api/v1/tags")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(tagsAsAdmin.status).toBe(200);
   expect(tagsAsAdmin.body.results).toEqual({
     count: 9,
@@ -321,7 +321,7 @@ test("Get Paginated Tags - Public", async () => {
   const tagsAsPublic = await request(app)
     .get("/api/v1/tags")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(tagsAsPublic.status).toBe(200);
   expect(tagsAsPublic.body.results).toEqual({
     count: 9,
@@ -348,7 +348,7 @@ test("Get Paginated Tags - Public", async () => {
 test("Get Paginated Tags - No Auth", async () => {
   const tagsNoAuth = await request(app)
     .get("/api/v1/tags")
-  
+
   expect(tagsNoAuth.status).toBe(401);
 });
 
@@ -357,7 +357,7 @@ test("Get One Tag - Admin", async () => {
   const tagAsAdmin = await request(app)
     .get("/api/v1/tags/1")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(tagAsAdmin.status).toBe(200);
   expect(tagAsAdmin.body.results).toEqual(
     expect.objectContaining({
@@ -376,7 +376,7 @@ test("Get One Tag - Public", async () => {
   const tagAsPublic = await request(app)
     .get("/api/v1/tags/1")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(tagAsPublic.status).toBe(200);
   expect(tagAsPublic.body.results).toEqual(
     expect.objectContaining({
@@ -394,7 +394,7 @@ test("Get One Tag - Public", async () => {
 test("Get One Tag - No Auth", async () => {
   const tagNoAuth = await request(app)
     .get("/api/v1/publications-types/1")
-  
+
   expect(tagNoAuth.status).toBe(401);
 });
 
@@ -407,7 +407,7 @@ test("Update One Tag - Admin", async () => {
       name: 'tag edited by test',
       description: 'tag updated by test',
     })
-    
+
   expect(tagAsAdmin.status).toBe(200);
 
 
@@ -434,7 +434,7 @@ test("Update One Tag - Public", async () => {
   const tagAsPublic = await request(app)
     .put("/api/v1/tags/1")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(tagAsPublic.status).toBe(403);
 
 });
@@ -442,7 +442,7 @@ test("Update One Tag - Public", async () => {
 test("Update One Tag - No Auth", async () => {
   const tagAsPublic = await request(app)
     .put("/api/v1/tags/1")
-  
+
   expect(tagAsPublic.status).toBe(401);
 
 });
@@ -456,7 +456,7 @@ test("Add One Tag - Admin", async () => {
       name: 'the one added tag admin',
       description: 'the one added tag admin',
     })
-  
+
   expect(tagAsAdmin.status).toBe(201);
 
 
@@ -486,7 +486,7 @@ test("Add One Tag - Public", async () => {
       name: 'the one added tag public',
       description: 'the one added tag public',
     })
-  
+
   expect(tagAsAdmin.status).toBe(403);
 
 });
@@ -498,7 +498,7 @@ test("Add One Tag - No Auth", async () => {
       name: 'the one added tag no auth',
       description: 'the one added tag no auth',
     })
-  
+
   expect(tagAsAdmin.status).toBe(401);
 
 });
@@ -538,7 +538,7 @@ test("Remove One Tag - Public", async () => {
   const tagAsAdmin = await request(app)
     .delete("/api/v1/tags/9")
     .set("Authorization", `Bearer ${user2Token}`)
-  
+
   expect(tagAsAdmin.status).toBe(403);
 
 });
@@ -546,7 +546,7 @@ test("Remove One Tag - Public", async () => {
 test("Remove One Tag - No Auth", async () => {
   const tagAsAdmin = await request(app)
     .delete("/api/v1/tags/8")
-  
+
   expect(tagAsAdmin.status).toBe(401);
 
 });
@@ -558,7 +558,7 @@ test("Get Paginated Publiciations Types - Admin", async () => {
   const publicationsTypesAsAdmin = await request(app)
     .get("/api/v1/publications-types")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(publicationsTypesAsAdmin.status).toBe(200);
   expect(publicationsTypesAsAdmin.body.results).toEqual({
     count: 3,
@@ -585,7 +585,7 @@ test("Get Paginated Publiciations Types - Public", async () => {
   const publicationsTypesAsPublic = await request(app)
     .get("/api/v1/publications-types")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(publicationsTypesAsPublic.status).toBe(200);
   expect(publicationsTypesAsPublic.body.results).toEqual({
     count: 3,
@@ -611,7 +611,7 @@ test("Get Paginated Publiciations Types - Public", async () => {
 test("Get Paginated Publiciations Types - No Auth", async () => {
   const publicationsTypesNoAuth = await request(app)
     .get("/api/v1/publications-types")
-  
+
   expect(publicationsTypesNoAuth.status).toBe(401);
 });
 
@@ -620,7 +620,7 @@ test("Get One Publiciation Type - Admin", async () => {
   const publicationsTypeAsAdmin = await request(app)
     .get("/api/v1/publications-types/1")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(publicationsTypeAsAdmin.status).toBe(200);
   expect(publicationsTypeAsAdmin.body.results).toEqual(
     expect.objectContaining({
@@ -638,7 +638,7 @@ test("Get One Publiciation Type - Public", async () => {
   const publicationsTypeAsPublic = await request(app)
     .get("/api/v1/publications-types/1")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(publicationsTypeAsPublic.status).toBe(200);
   expect(publicationsTypeAsPublic.body.results).toEqual(
     expect.objectContaining({
@@ -655,7 +655,7 @@ test("Get One Publiciation Type - Public", async () => {
 test("Get One Publiciation Type - No Auth", async () => {
   const publicationsTypeNoAuth = await request(app)
     .get("/api/v1/publications-types/1")
-  
+
   expect(publicationsTypeNoAuth.status).toBe(401);
 });
 
@@ -668,7 +668,7 @@ test("Update One Publiciation Type - Admin", async () => {
       name: 'publication type edited by test',
       description: 'publication type updated by test',
     })
-  
+
   expect(updatePublicationsTypeAsPublic.status).toBe(200);
 
 
@@ -694,7 +694,7 @@ test("Update One Publiciation Type - Public", async () => {
   const publicationsTypeAsPublic = await request(app)
     .put("/api/v1/publications-types/1")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(publicationsTypeAsPublic.status).toBe(403);
 
 });
@@ -702,7 +702,7 @@ test("Update One Publiciation Type - Public", async () => {
 test("Update One Publiciation Type - No Auth", async () => {
   const publicationsTypeAsPublic = await request(app)
     .put("/api/v1/publications-types/1")
-  
+
   expect(publicationsTypeAsPublic.status).toBe(401);
 
 });
@@ -713,7 +713,7 @@ test("Get Paginated Users - Admin", async () => {
   const tagsAsAdmin = await request(app)
     .get("/api/v1/users")
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(tagsAsAdmin.status).toBe(200);
   expect(tagsAsAdmin.body.results).toEqual({
     count: 3,
@@ -751,21 +751,21 @@ test("Get Paginated Users - Public", async () => {
   const tagsAsPublic = await request(app)
     .get("/api/v1/users")
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(tagsAsPublic.status).toBe(403);
 });
 
 test("Get Paginated Users - No Auth", async () => {
   const tagsNoAuth = await request(app)
     .get("/api/v1/users")
-  
+
   expect(tagsNoAuth.status).toBe(401);
 });
 
 
 
 test("Get Same User - Admin", async () => {
-  
+
   const meAsAdmin = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${adminToken}`);
@@ -786,19 +786,19 @@ test("Get Same User - Admin", async () => {
   expect(meAsAdmin.body.results).not.toHaveProperty('phone');
   expect(meAsAdmin.body.results).not.toHaveProperty('token');
   expect(meAsAdmin.body.results).not.toHaveProperty('password');
-  
+
   let userId = meAsAdmin.body.results.id
-  
+
   const sameUserAsAdmin = await request(app)
     .get(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(sameUserAsAdmin.status).toBe(200);
-  
+
   expect(sameUserAsAdmin.body.results).not.toHaveProperty('profiles');
   expect(sameUserAsAdmin.body.results).not.toHaveProperty('token');
   expect(sameUserAsAdmin.body.results).not.toHaveProperty('password');
-  
+
   expect(sameUserAsAdmin.body.results).toEqual(
     expect.objectContaining(
       {
@@ -818,7 +818,7 @@ test("Get Same User - Admin", async () => {
 });
 
 test("Get Same User - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
@@ -839,19 +839,19 @@ test("Get Same User - Public", async () => {
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const sameUserAsPublic = await request(app)
     .get(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${user2Token}`);
-  
+
   expect(sameUserAsPublic.status).toBe(200);
-  
+
   expect(sameUserAsPublic.body.results).not.toHaveProperty('profiles');
   expect(sameUserAsPublic.body.results).not.toHaveProperty('token');
   expect(sameUserAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(sameUserAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -870,16 +870,14 @@ test("Get Same User - Public", async () => {
 
 });
 
-
-
 test("Get another User - Admin", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-    
+
   expect(meAsPublic.body.results).not.toHaveProperty("code_phone");
   expect(meAsPublic.body.results).not.toHaveProperty("phone");
   expect(meAsPublic.body.results).not.toHaveProperty("token");
@@ -895,19 +893,19 @@ test("Get another User - Admin", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const otherUserAsAdmin = await request(app)
     .get(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${adminToken}`);
-  
+
   expect(otherUserAsAdmin.status).toBe(200);
-  
+
   expect(otherUserAsAdmin.body.results).not.toHaveProperty('profiles');
   expect(otherUserAsAdmin.body.results).not.toHaveProperty('token');
   expect(otherUserAsAdmin.body.results).not.toHaveProperty('password');
-  
+
   expect(otherUserAsAdmin.body.results).toEqual(
     expect.objectContaining(
       {
@@ -927,18 +925,18 @@ test("Get another User - Admin", async () => {
 });
 
 test("Get another User - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -949,15 +947,15 @@ test("Get another User - Public", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const otherUserPublic = await request(app)
     .get(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${user3Token}`);
-  
+
   expect(otherUserPublic.status).toBe(200);
-  
+
   expect(otherUserPublic.body.results).not.toHaveProperty('profiles');
   expect(otherUserPublic.body.results).not.toHaveProperty('token');
   expect(otherUserPublic.body.results).not.toHaveProperty('password');
@@ -965,7 +963,7 @@ test("Get another User - Public", async () => {
   expect(otherUserPublic.body.results).not.toHaveProperty('code_phone');
   expect(otherUserPublic.body.results).not.toHaveProperty('email_verified');
   expect(otherUserPublic.body.results).not.toHaveProperty('email');
-  
+
   expect(otherUserPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -980,18 +978,18 @@ test("Get another User - Public", async () => {
 });
 
 test("Get another User - No Auth", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1002,29 +1000,29 @@ test("Get another User - No Auth", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const otherUserNoAuth = await request(app)
     .get(`/api/v1/users/${userId}`)
-  
+
   expect(otherUserNoAuth.status).toBe(401);
-  
+
 });
 
 test("Update same User - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1035,9 +1033,9 @@ test("Update same User - Public", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const sameUserPublic = await request(app)
     .put(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${user2Token}`)
@@ -1046,9 +1044,9 @@ test("Update same User - Public", async () => {
       last_name: 'edited last name',
       code_phone: 'edited code phone',
       phone: 'edited phone',
-      interests:'1,2,3'
+      interests: '1,2,3'
     })
-  
+
   expect(sameUserPublic.status).toBe(200);
 
 
@@ -1058,11 +1056,11 @@ test("Update same User - Public", async () => {
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(checkMeAsPublic.status).toBe(200);
-  
+
   expect(checkMeAsPublic.body.results).not.toHaveProperty('profiles');
   expect(checkMeAsPublic.body.results).not.toHaveProperty('token');
   expect(checkMeAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(checkMeAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1091,18 +1089,18 @@ test("Update same User - Public", async () => {
 
 
 test("Update another User - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1113,9 +1111,9 @@ test("Update another User - Public", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const updateOtherUserPublic = await request(app)
     .put(`/api/v1/users/${userId}`)
     .set("Authorization", `Bearer ${user3Token}`)
@@ -1124,9 +1122,9 @@ test("Update another User - Public", async () => {
       last_name: 'publication type updated by test',
       code_phone: 'publication type updated by test',
       phone: 'publication type updated by test',
-      interests:'1,2,3'
+      interests: '1,2,3'
     })
-  
+
   expect(updateOtherUserPublic.status).toBe(403);
 });
 
@@ -1145,9 +1143,9 @@ test("Add One Publication - Public", async () => {
       description: 'description anything',
       content: 'content anything',
       reference_link: 'www.academlo.com',
-      tags:'4,2,6'
+      tags: '4,2,6'
     })
-  
+
   expect(addApublicationAsPublic.status).toBe(201);
 
 })
@@ -1155,7 +1153,7 @@ test("Add One Publication - Public", async () => {
 test("Get Paginated Publications - No Auth", async () => {
   const publicationsNoAuth = await request(app)
     .get("/api/v1/publications")
-  
+
   expect(publicationsNoAuth.status).toBe(200);
   expect(publicationsNoAuth.body.results).toEqual({
     count: expect.any(Number),
@@ -1211,14 +1209,12 @@ test("Get Paginated Publications - No Auth", async () => {
 test("Get One Publications - No Auth", async () => {
   const publicationsNoAuth = await request(app)
     .get("/api/v1/publications")
-    
+
   expect(publicationsNoAuth.status).toBe(200);
-  
-  let publicationID = publicationsNoAuth.body.results.results[0].id 
-    
+  let publicationID = publicationsNoAuth.body.results.results[0].id
   const onePublicationNoAuth = await request(app)
     .get(`/api/v1/publications/${publicationID}`)
-  
+
   expect(onePublicationNoAuth.status).toBe(200);
 
   expect(onePublicationNoAuth.body.results).toEqual(
@@ -1265,18 +1261,18 @@ test("Get One Publications - No Auth", async () => {
 /***** Publications X User  Start *****/
 
 test("Get User Votes - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1287,13 +1283,13 @@ test("Get User Votes - Public", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const sameUserVotes = await request(app)
     .get(`/api/v1/users/${userId}/votes`)
     .set("Authorization", `Bearer ${user2Token}`)
-  
+
   expect(sameUserVotes.status).toBe(200);
 
   expect(sameUserVotes.body.results).toEqual({
@@ -1347,18 +1343,18 @@ test("Get User Votes - Public", async () => {
 })
 
 test("Get User Publications - Public", async () => {
-  
+
   const meAsPublic = await request(app)
     .get("/api/v1/auth/me")
     .set("Authorization", `Bearer ${user2Token}`);
 
   expect(meAsPublic.status).toBe(200);
-  
+
   expect(meAsPublic.body.results).not.toHaveProperty('code_phone');
   expect(meAsPublic.body.results).not.toHaveProperty('phone');
   expect(meAsPublic.body.results).not.toHaveProperty('token');
   expect(meAsPublic.body.results).not.toHaveProperty('password');
-  
+
   expect(meAsPublic.body.results).toEqual(
     expect.objectContaining(
       {
@@ -1369,13 +1365,13 @@ test("Get User Publications - Public", async () => {
       }
     )
   );
-  
+
   let userId = meAsPublic.body.results.id
-  
+
   const sameUserVotes = await request(app)
     .get(`/api/v1/users/${userId}/publications`)
     .set("Authorization", `Bearer ${user2Token}`)
-  
+
   expect(sameUserVotes.status).toBe(200);
 
   expect(sameUserVotes.body.results).toEqual({
@@ -1431,23 +1427,23 @@ test("Get User Publications - Public", async () => {
 
 
 test("Check User Vote Publication - Public", async () => {
-  
+
   const publicationsNoAuth = await request(app)
     .get("/api/v1/publications");
 
   expect(publicationsNoAuth.status).toBe(200);
 
-  let publicationID = publicationsNoAuth.body.results.results[0].id; 
+  let publicationID = publicationsNoAuth.body.results.results[0].id;
 
   /* Add Vote */
   const votePublicationAsPublic = await request(app)
     .post(`/api/v1/publications/${publicationID}/vote`)
     .set("Authorization", `Bearer ${user3Token}`)
-    
+
   expect(votePublicationAsPublic.status).toBe(201);
 
-  
-  
+
+
   const getVotedPublication = await request(app)
     .get(`/api/v1/publications/${publicationID}`)
 
@@ -1563,9 +1559,9 @@ test("Remove Publication - Check Same User, Public & Admin", async () => {
       description: 'description anything',
       content: 'content anything',
       reference_link: 'www.academlo.com',
-      tags:'4,2,6'
+      tags: '4,2,6'
     })
-  
+
   expect(addApublicationAsPublic.status).toBe(201);
 
   /* Now, user2 has 2 publications */
@@ -1622,8 +1618,8 @@ test("Remove Publication - Check Same User, Public & Admin", async () => {
     ),
   });
 
-  let publicationId1 = publicationsNoAuth.body.results.results[0].id 
-  let publicationId2 = publicationsNoAuth.body.results.results[1].id 
+  let publicationId1 = publicationsNoAuth.body.results.results[0].id
+  let publicationId2 = publicationsNoAuth.body.results.results[1].id
 
 
   /* Different User can't delete a publication */
@@ -1632,14 +1628,14 @@ test("Remove Publication - Check Same User, Public & Admin", async () => {
     .set("Authorization", `Bearer ${user3Token}`)
 
   expect(removePublicationAsPublic.status).toBe(403);
-  
+
   /* Admin can delete any publication */
   const removePublicationAsAdmin = await request(app)
     .delete(`/api/v1/publications/${publicationId2}`)
     .set("Authorization", `Bearer ${adminToken}`)
 
   expect(removePublicationAsAdmin.status).toBe(200);
-  
+
   /* 
     Different User can't delete a publication, but because not exist,
     return not found 404

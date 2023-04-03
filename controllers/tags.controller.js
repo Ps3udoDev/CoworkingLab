@@ -17,7 +17,7 @@ const getAllTags = async (req, res, next) => {
 const postTag = async (req, res, next) => {
   const { name, description, image_url } = req.body
   try {
-    if (name && description && image_url) {
+    if (name && description) {
       const tag = await tagsServices.createTag({ name, description, image_url })
       return res.status(201).json({ result: tag })
     } else {
@@ -42,7 +42,7 @@ const putTag = async (req, res, next) => {
   const { name, description, image_url } = req.body
   const id = req.params.id
   try {
-    if (name && description && image_url) {
+    if (name && description) {
       const tag = await tagsServices.updateTag(id, { name, description, image_url })
       return res.status(200).json({ results: tag })
     } else {

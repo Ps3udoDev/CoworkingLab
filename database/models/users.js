@@ -7,9 +7,21 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Users.belongsTo(models.Countries, { as: 'country', foreignKey: 'country_id' })
       Users.hasMany(models.Profiles, { as: 'profiles', foreignKey: 'user_id' })
-      Users.hasMany(models.Publications, {as: 'publications', foreignKey: 'user_id'})
-      Users.belongsToMany(models.Publications, {through: models.Votes, as: 'votes', foreignKey: 'user_id', otherKey: 'publication_id'})
-      Users.belongsToMany(models.Tags, {through: models.UsersTags, as: 'tags',foreignKey: 'user_id', otherKey: 'tag_id' })
+      Users.hasMany(models.Publications, { as: 'publications', foreignKey: 'user_id' })
+      Users.belongsToMany(models.Publications, { through: models.Votes, as: 'votes', foreignKey: 'user_id', otherKey: 'publication_id' })
+      Users.belongsToMany(models.Tags, { through: models.UsersTags, as: 'interests', foreignKey: 'user_id', otherKey: 'tag_id' })
+      Users.addScope('asociate_tags', {
+        attributes: ['id', 'first_name', 'last_name', 'email', 'username', 'email_verified', 'code_phone', 'phone', 'image_url', 'created_at', 'updated_at',],
+        include: [
+          {
+            model: models.Tags,
+            as: 'interests',
+            through: {
+              attributes: []
+            }
+          }
+        ]
+      })
     }
   }
   Users.init({
@@ -69,8 +81,9 @@ module.exports = (sequelize, DataTypes) => {
     underscored: true,
     timestamps: true,
     scopes: {
-      view_public: { attributes: ['id', 'first_name', 'last_name', 'country_id', 'image_url'] },
-      view_same_user: { attributes: ['id', 'first_name', 'last_name', 'country_id', 'image_url', 'email', 'username', 'code_phone', 'phone'] },
+      view_same_user: { attributes: ['id', 'first_name', 'last_name', 'email', 'email_verified', 'code_phone', 'phone', 'image_url'] },
+      view_another_admin: { attributes: ['id', 'first_name', 'last_name', 'email', 'email_verified', 'code_phone', 'phone', 'image_url'] },
+      view_another_public: { attributes: ['id', 'first_name', 'last_name', 'image_url'] },
       auth_flow: { attributes: ['id', 'first_name', 'last_name', 'email', 'username',] },
       view_me: { attributes: ['id', 'first_name', 'last_name', 'email', 'username', 'image_url'] }
     },

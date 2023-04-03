@@ -12,6 +12,7 @@ class UsersService {
   async findAndCount(query) {
     const options = {
       where: {},
+      include: []
     }
 
     const { size, page } = query
@@ -43,14 +44,14 @@ class UsersService {
     //Necesario para el findAndCountAll de Sequelize
     options.distinct = true
 
-    const users = await models.Users.findAndCountAll(options)
+    const users = await models.Users.scope('asociate_tags').findAndCountAll(options)
 
     const totalPages = size === 0 ? 1 : Math.ceil(users.count / (size ? size : users.count));
     const startIndex = ((page ? page : 1) - 1) * (size ? size : users.count);
     const endIndex = startIndex + Number(size ? size : users.count);
 
     const results = page > totalPages ? [] : users.rows.slice(startIndex, endIndex)
-    
+
     return {
       count: users.count,
       totalPages,
@@ -81,19 +82,34 @@ class UsersService {
 
 
   async getAuthUserOr404(id) {
-    let user = await models.Users.scope('auth_flow').findByPk(id, { raw: true })
+    let user = await models.Users.scope('asociate_tags').findByPk(id, {
+      raw: true,
+      include: []
+    })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }
 
   async getUser(id) {
-    let user = await models.Users.findByPk(id)
+    let user = await models.Users.scope('asociate_tags').findByPk(id, {
+      include: []
+    })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }
 
   async getUserByIdBasedOnScope(id, scope) {
-    let user = await models.Users.scope(scope).findByPk(id, { raw: true })
+    let user = await models.Users.scope(scope).findByPk(id, {
+      include: [
+        {
+          model: models.Tags,
+          as: 'interests',
+          through: {
+            attributes: []
+          }
+        }
+      ]
+    })
     if (!user) throw new CustomError('Not found User', 404, 'Not Found')
     return user
   }
@@ -108,9 +124,28 @@ class UsersService {
   async updateUser(id, obj) {
     const transaction = await models.sequelize.transaction()
     try {
-      let user = await models.Users.findByPk(id)
+      let user = await models.Users.findByPk(id,
+        {
+          include: [{
+            model: models.Tags,
+            as: 'interests'
+          }]
+        })
       if (!user) throw new CustomError('Not found user', 404, 'Not Found')
-      let updatedUser = await user.update(obj, { transaction })
+      const { first_name, last_name, code_phone, phone, interests } = obj
+      let updatedUser = await user.update({ first_name, last_name, code_phone, phone, interests }, { transaction })
+      if (interests) {
+        let tagsIds = obj.interests.split(',')
+        let findedTags = await models.Tags.findAll({
+          where: { id: tagsIds },
+          attributes: ['id'],
+          raw: true,
+        })
+        if (findedTags.length > 0) {
+          let tags_ids = findedTags.map(tag => tag['id'])
+          await updatedUser.setInterests(tags_ids, { transaction })
+        }
+      }
       await transaction.commit()
       return updatedUser
     } catch (error) {

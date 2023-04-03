@@ -18,7 +18,7 @@ const getPublicationTypeById = async (req, res, next) => {
   try {
     const id = req.params.id
     const publicationType = await publicationTypesServices.getPublicationTypeOr404(id)
-    return res.status(200).json({ results: { 'publication-type': publicationType } })
+    return res.status(200).json({ results: publicationType })
   } catch (error) {
     next(error)
   }

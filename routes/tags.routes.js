@@ -1,7 +1,7 @@
 const router = require('express').Router()
 const passport = require('../libs/passport')
 
-const verifySchema = require('../schemas/joiSchema.checker')
+//const verifySchema = require('../schemas/joiSchema.checker')
 const { adminValidate } = require('../middlewares/roles.handler')
 
 const { getAllTags, getTagById, postTag, putTag, deleteTag } = require('../controllers/tags.controller')

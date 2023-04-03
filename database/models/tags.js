@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class Tags extends Model {
     static associate(models) {
-      Tags.hasMany(models.PublicationTags, { as: 'publication_tags', foreignKey: 'tag_id' })
+      Tags.hasMany(models.PublicationsTags, { as: 'publications_tags', foreignKey: 'tag_id' })
       Tags.hasMany(models.UsersTags, {as: 'user_tags', foreignKey: 'tag_id'})
     }
   }

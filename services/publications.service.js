@@ -2,7 +2,7 @@ const { v4: uuid4 } = require('uuid');
 const models = require('../database/models')
 const { Op, cast, literal } = require('sequelize')
 const { CustomError } = require('../utils/helpers');
-const publications = require('../database/models/publications');
+const { raw } = require('express');
 
 class PublicationsServices {
   constructor() {
@@ -19,30 +19,13 @@ class PublicationsServices {
           ), 'integer'), 'votes_count'],
         ]
       },
-      include: [
-        /* {
-          model: models.Users,
-          as: 'user',
-          attributes: ['first_name', 'last_name', 'image_url']
-        },
-        {
-          model: models.PublicationsTypes,
-          as: 'publication_types'
-        },
-        {
-          model: models.Tags,
-          as: 'tags',
-          through: {
-            attributes: []
-          }
-        } */
-      ]
+      include: []
     }
 
-    const { limit, offset, tags } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -59,7 +42,17 @@ class PublicationsServices {
     options.distinct = true
 
     const publications = await models.Publications.scope('votes_count').findAndCountAll(options)
-    return publications
+    const totalPages = size === 0 ? 1 : Math.ceil(publications.count / (size ? size : publications.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : publications.count);
+    const endIndex = startIndex + Number(size ? size : publications.count);
+
+    const results = page > totalPages ? [] : publications.rows.slice(startIndex, endIndex)
+    return {
+      count: publications.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createPublication(obj, tags) {
@@ -95,7 +88,39 @@ class PublicationsServices {
   }
 
   async getPublication(id) {
-    let publication = await models.Publication.findByPk(id)
+    let publication = await models.Publications.findByPk(id, {
+      attributes: {
+        include: [
+          [cast(literal(
+            `(SELECT COUNT(*) FROM "votes" 
+            WHERE "votes"."publication_id" = "Publications"."id")`
+          ), 'integer'), 'votes_count'],
+        ],
+
+      },
+      include: [
+        {
+          model: models.PublicationsImages,
+          as: 'images'
+        },
+        {
+          model: models.Users,
+          as: 'user',
+          attributes: ['first_name', 'last_name', 'image_url']
+        },
+        {
+          model: models.PublicationTypes,
+          as: 'publication_type'
+        },
+        {
+          model: models.Tags,
+          as: 'tags',
+          through: {
+            attributes: []
+          }
+        }
+      ]
+    })
     if (!publication) throw new CustomError('Not found Publication', 404, 'Not Found')
     return publication
   }
