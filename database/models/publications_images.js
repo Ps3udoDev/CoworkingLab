@@ -22,6 +22,10 @@ module.exports = (sequelize, DataTypes) => {
     order: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      validate:{
+        min: 1,
+        max: 3
+      }
     }
   }, {
     sequelize,
