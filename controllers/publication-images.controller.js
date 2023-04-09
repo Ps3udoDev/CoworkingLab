@@ -1,6 +1,5 @@
 const { uploadFile, deleteFile } = require('../libs/awsS3');
 const PublicationImagesService = require('../services/publications-images.service');
-const fs = require('fs')
 const { CustomError } = require('../utils/helpers')
 
 const publicationImagesService = new PublicationImagesService()

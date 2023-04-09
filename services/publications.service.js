@@ -225,17 +225,7 @@ class PublicationsServices {
       throw error
     }
   }
-
-  async uploadImage(id){
-    const transaction = await models.sequelize.transaction()
-    try {
-      let publication = await models.Publications.findByPk(id)
-      if (!publication) throw new CustomError('Not found publication', 404, 'Not Found')
-    } catch (error) {
-      await transaction.rollback()
-      throw error
-    }
-  }
+  
 }
 
 module.exports = PublicationsServices

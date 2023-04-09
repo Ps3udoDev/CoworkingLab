@@ -159,6 +159,7 @@ class UsersService {
     try {
       let user = await models.Users.findByPk(id)
       if (!user) throw new CustomError('Not found user', 404, 'Not Found')
+      if (user.image_url) throw new CustomError('Image Tag is on Cloud, must be deleted first', 400, 'Bad Request')
       await user.destroy({ transaction })
       await transaction.commit()
       return user
@@ -232,6 +233,40 @@ class UsersService {
       let restoreUser = await user.update({ password: hashPassword(newPassword) }, { transaction })
       await transaction.commit()
       return restoreUser
+    } catch (error) {
+      await transaction.rollback()
+      throw error
+    }
+  }
+
+  async uploadImage(image_url, user_id) {
+    const transaction = await models.sequelize.transaction()
+    try {
+      let user = await models.Users.findByPk(user_id)
+      if (!user) throw new CustomError('Not found user', 404, 'Not Found')
+      let updateImage = await user.update({ image_url }, { transaction })
+      await transaction.commit()
+      return updateImage
+    } catch (error) {
+      await transaction.rollback()
+      throw error
+    }
+  }
+
+  async getImageOr404(user_id) {
+    const userImage = await models.Users.findByPk(user_id)
+    if (!userImage.image_url) throw new CustomError('The user does not have an associated image', 404, 'Bad request')
+    return userImage
+  }
+
+  async removeImage(user_id) {
+    const transaction = await models.sequelize.transaction()
+    try {
+      let user = await models.Users.findByPk(user_id)
+      if (!user) throw new CustomError('Not found user', 404, 'Not Found')
+      let removeImage = await user.update({ image_url: null }, { transaction })
+      await transaction.commit()
+      return removeImage
     } catch (error) {
       await transaction.rollback()
       throw error
