@@ -147,34 +147,38 @@ paths:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: string
-                  first_name:
-                    type: string
-                  last_name:
-                    type: string
-                  email:
-                    type: string
-                  username:
-                    type: string
-                  image_url:
-                    type: string
-                  profiles:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                        user_id:
-                          type: string
-                        role_id:
-                          type: integer
-                          example: 1
-                        created_at:
-                          type: string
-                        updated_at:
-                          type: string
+                  results:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      first_name:
+                        type: string
+                      last_name:
+                        type: string
+                      email:
+                        type: string
+                      username:
+                        type: string
+                      image_url:
+                        type: string
+                      profiles:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                            user_id:
+                              type: string
+                            role_id:
+                              type: integer
+                              example: 1
+                            created_at:
+                              type: string
+                            updated_at:
+                              type: string
+
         "401":
           description: Unauthorized
   /auth/forget-password:
@@ -227,10 +231,10 @@ paths:
         - $ref: "#/components/parameters/token"
       requestBody:
         description: new password
-        content: 
+        content:
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/Change-Password'
+              $ref: "#/components/schemas/Change-Password"
         required: true
       responses:
         "200":
@@ -319,16 +323,16 @@ paths:
           description: search users by the date they created their account relative to the current date
           schema:
             type: string
-        - name: limit
+        - name: size
           in: query
-          description: limit of users that will be shown in each query
+          description: number of results to return in each query
           schema:
-            type: string
-        - name: offset
+            type: number
+        - name: page
           in: query
-          description: search offset, from which user started the search
+          description: page on which the user will be located to obtain results
           schema:
-            type: string
+            type: number
       responses:
         "200":
           description: returns users in a paginated manner
@@ -340,56 +344,54 @@ paths:
                   results:
                     type: object
                     properties:
-                      users:
-                        type: object
-                        properties:
-                          count: 
-                            type: integer
-                            example: 1
-                          rows:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: string
-                                  example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
-                                first_name:
-                                  type: string
-                                  example: user
-                                last_name:
-                                  type: string
-                                  example: user
-                                email:
-                                  type: string
-                                  example: example@example@gmail.com
-                                username:
-                                  type: string
-                                  example: example@example@gmail.com
-                                password:
-                                  type: string
-                                  example: b$08$kx07j.y97XiyGaEQymM.eOLNJ
-                                email_verified:
-                                  type: string
-                                token:
-                                  type: string
-                                code_phone:
-                                  type: string
-                                  example: +593
-                                phone: 
-                                  type: string
-                                  example: 123456789
-                                country_id:
-                                  type: integer
-                                  example: 1
-                                image_url:
-                                  type: string
-                                created_at:
-                                  type: string
-                                  example: 2023-03-21T12:55:11.024z
-                                updated_at:
-                                  type: string
-                                  example: 2023-03-21T12:55:11.024Z
+                      count:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+                      currentPage:
+                        type: number
+                        example: 1
+                      results:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
+                            first_name:
+                              type: string
+                              example: user
+                            last_name:
+                              type: string
+                              example: user
+                            email:
+                              type: string
+                              example: example@example@gmail.com
+                            username:
+                              type: string
+                              example: example@example@gmail.com
+                            email_verified:
+                              type: string
+                            code_phone:
+                              type: string
+                              example: +593
+                            phone:
+                              type: string
+                              example: 123456789
+                            image_url:
+                              type: string
+                            created_at:
+                              type: string
+                              example: 2023-03-21T12:55:11.024z
+                            updated_at:
+                              type: string
+                              example: 2023-03-21T12:55:11.024Z
+                            interests:
+                              type: array
+                              example: []
 
         "401":
           description: Unauthorized
@@ -417,26 +419,26 @@ paths:
               schema:
                 type: object
                 properties:
-                   results:
+                  results:
                     type: object
                     properties:
-                      users:
-                        type: object
-                        properties:
-                          id: 
-                            type: string
-                            example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
-                          first_name:
-                            type: string
-                            example: user
-                          last_name:
-                            type: string
-                            example: user
-                          country_id:
-                            type: integer
-                            example: 1
-                          image_url:
-                            type: string
+                      id:
+                        type: string
+                        example: 8ef2436b-8b3d-4927-a7b3-bd576eec42b2
+                      first_name:
+                        type: string
+                        example: user
+                      last_name:
+                        type: string
+                        example: user
+                      country_id:
+                        type: integer
+                        example: 1
+                      image_url:
+                        type: string
+                      interests:
+                        type: array
+                        example: []
 
         "401":
           description: Unauthorized
@@ -457,7 +459,7 @@ paths:
             type: string
       requestBody:
         description: You can edit the fields that do not compromise authentication
-        content: 
+        content:
           application/x-www-form-urlencoded:
             schema:
               type: object
@@ -486,7 +488,7 @@ paths:
                   results:
                     type: object
                     properties:
-                      user: 
+                      user:
                         type: object
                         properties:
                           id:
@@ -514,7 +516,7 @@ paths:
                           code_phone:
                             type: string
                             example: +593
-                          phone: 
+                          phone:
                             type: string
                             example: 123456789
                           country_id:
@@ -530,12 +532,263 @@ paths:
                             example: 2023-03-21T12:55:11.024Z
         "401":
           description: Unauthorized
+        "403":
+          description: action forbidden for this user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errorName:
+                    type: string
+                    example: Bad Request
+                  message: 
+                    type: string
+                    example: Unauthorized
         "404":
           description: the user's email is not found in the database
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/errorName"
+  /users/{id}/votes:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: The votes made by the users will be seen
+      description: The votes made by users will be seen in the publications where they have voted
+      operationId: userGetVotes
+      parameters:
+        - name: id
+          in: path
+          description: User ID to search the votes
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: number of results to return in each query
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: page on which the user will be located to obtain results
+          schema:
+            type: number
+      responses:
+        "200":
+          description: returns user in paged form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+                      currentPage:
+                        type: number
+                        example: 1
+                      results:
+                        type: array
+                        example: []
+
+        "401":
+          description: Unauthorized
+  /users/{id}/publications:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: Posts made by users will be seen
+      description: Publications that the user has made
+      operationId: userGetPublications
+      parameters:
+        - name: id
+          in: path
+          description: User ID to search the votes
+          required: true
+          schema:
+            type: string
+        - name: size
+          in: query
+          description: number of results to return in each query
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: page on which the user will be located to obtain results
+          schema:
+            type: number
+      responses:
+        "200":
+          description: returns user posts in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+                      currentPage:
+                        type: number
+                        example: 1
+                      results:
+                        type: array
+                        example: []
+        "401":
+          description: Unauthorized
+        "404":
+          description: the user id does not belong to a valid user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found User
+                  errorName:
+                    type: string
+                    example: Bad Request
+  /users/{id}/add-image:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: The user will be able to upload an image
+      description: The user will send an image that will be saved in the chosen service (aws, firebase…)
+      operationId: userPostImage
+      parameters:
+        - name: id
+          in: path
+          description: User ID to upload profile picture
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: You can edit the fields that do not compromise authentication
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: upload the image correctly to the cloud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Image Added
+        "403":
+          description: the user trying to send the request is not authorized to access this resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: forbidden
+                  errorName:
+                    type: string
+                    example: Bad Request
+        "404":
+          description: the user you are trying to access does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found user
+                  errorName:
+                    type: string
+                    example: Bad Request
+  /users/{id}/remove-image:
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - User
+      summary: The user will be able to delete his profile picture
+      description: The user will have the option to remove the image from the service (aws, firebase...)
+      operationId: userDeleteImage
+      parameters:
+        - name: id
+          in: path
+          description: User ID to remove profile picture
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Image Removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Image Removed
+        "403":
+          description: The user you are trying to access is not yours, only the administrators or the user himself can make this request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: forbidden
+                  errorName:
+                    type: string
+                    example: Bad Request
+        "404":
+          description: the user you are trying to access does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found user
+                  errorName:
+                    type: string
+                    example: Bad Request
   /publications-types:
     get:
       security:
@@ -546,16 +799,16 @@ paths:
       description: Publication types can be filtered based on their fields, and their data type will define the search rule
       operationId: publications-typesGetAll
       parameters:
-        - name: limit
+        - name: size
           in: query
-          description: limit for user search using query
+          description: number of results to return in each query
           schema:
-            type: string
-        - name: offset
+            type: number
+        - name: page
           in: query
-          description: offset for user search using query
+          description: page on which the user will be located to obtain results
           schema:
-            type: string
+            type: number
         - name: id
           in: query
           description: id for user search using query
@@ -577,7 +830,37 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Login"
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+                      currentPage:
+                        type: number
+                        example: 1
+                      results:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                              example: 1
+                            name:
+                              type: string
+                            description:
+                              type: string
+                            created_at:
+                              type: string
+                              example: 2023-04-03T21:54:13.301Z
+                            updated_at:
+                              type: string
+                              example: 2023-04-03T21:54:13.301Z
         "401":
           description: Unauthorized
   /publications-types/{id}:
@@ -602,9 +885,85 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Login"
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                  description:
+                    type: string
+                  created_at:
+                    type: string
+                    example: 2023-04-03T21:54:13.301Z
+                  updated_at:
+                    type: string
+                    example: 2023-04-03T21:54:13.301Z
         "401":
           description: Unauthorized
+        "404":
+          description: Not found Publication Type
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not found Publication Type
+                  errorName:
+                    type: string
+                    example: Not Found
+    put:
+      security:
+        - JWT: []
+      tags:
+        - Publications Types
+      summary: allows you to modify a type of publication
+      description: Alter existing fields
+      operationId: putPublicationsTypes
+      parameters:
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: You can alter existing fields
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+        required: true
+      responses:
+        "200":
+          description: was successfully modified
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Success Update
+        "401": 
+          description: Unauthorized
+        "404":
+          description: post type not found or missing fields to fill
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: post type not found or missing fields to fill
+                  errorName:
+                    type: string
+                    example: Bad request
   /countries:
     get:
       security:
@@ -615,7 +974,7 @@ paths:
       description: Paginated view of all countries in the app
       operationId: getCountries
       responses:
-        '200':
+        "200":
           description: returns countries in paginated form
           content:
             application/json:
@@ -628,7 +987,7 @@ paths:
                       countries:
                         type: object
                         properties:
-                          count: 
+                          count:
                             type: integer
                             example: 1
                           rows:
@@ -636,7 +995,7 @@ paths:
                             items:
                               type: object
                               properties:
-                                id: 
+                                id:
                                   type: integer
                                   example: 1
                                 name:
@@ -653,7 +1012,7 @@ paths:
       description: Paginated view of all states in the app
       operationId: getStates
       responses:
-        '200':
+        "200":
           description: returns states in paginated form
           content:
             application/json:
@@ -666,7 +1025,7 @@ paths:
                       states:
                         type: object
                         properties:
-                          count: 
+                          count:
                             type: integer
                             example: 1
                           rows:
@@ -674,10 +1033,10 @@ paths:
                             items:
                               type: object
                               properties:
-                                id: 
+                                id:
                                   type: integer
                                   example: 1
-                                country_id: 
+                                country_id:
                                   type: integer
                                   example: 1
                                 name:
@@ -694,7 +1053,7 @@ paths:
       description: Paginated view of all Cities in the app
       operationId: getCities
       responses:
-        '200':
+        "200":
           description: returns cities in paginated form
           content:
             application/json:
@@ -707,7 +1066,7 @@ paths:
                       cities:
                         type: object
                         properties:
-                          count: 
+                          count:
                             type: integer
                             example: 1
                           rows:
@@ -715,10 +1074,10 @@ paths:
                             items:
                               type: object
                               properties:
-                                id: 
+                                id:
                                   type: integer
                                   example: 1
-                                state_id: 
+                                state_id:
                                   type: integer
                                   example: 1
                                 name:
@@ -735,7 +1094,7 @@ paths:
       description: Paginated view of all Roles in the app
       operationId: getRoles
       responses:
-        '200':
+        "200":
           description: returns roles in paginated form
           content:
             application/json:
@@ -748,7 +1107,7 @@ paths:
                       roles:
                         type: object
                         properties:
-                          count: 
+                          count:
                             type: integer
                             example: 1
                           rows:
@@ -756,7 +1115,7 @@ paths:
                             items:
                               type: object
                               properties:
-                                id: 
+                                id:
                                   type: integer
                                   example: 1
                                 name:

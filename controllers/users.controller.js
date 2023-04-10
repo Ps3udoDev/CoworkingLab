@@ -74,8 +74,9 @@ const getPublicationsByUserVotes = async (req, res, next) => {
 
 const getUserPublications = async (req, res, next) => {
   const id = req.params.id
+  const {size, page} = req.query
   try {
-    const publications = await publicationsServices.getUserPublications(id)
+    const publications = await publicationsServices.getUserPublications(id,{size, page})
     const { count, currentPage, totalPages, results } = publications
     return res.status(200).json({ results: { count, totalPages, currentPage, results } })
   } catch (error) {
@@ -109,7 +110,7 @@ const uploadImage = async (req, res, next) => {
 
       const user = await userServices.uploadImage(bucketURL, userId)
 
-      return res.status(200).json({ results: { message: 'Image Added', user: user } })
+      return res.status(200).json({ results: { message: 'Image Added'} })
     } else {
       return res.status(403).json({ message: 'Forbidden' })
     }
@@ -130,7 +131,7 @@ const removeImage = async (req, res, next) => {
       await deleteFile(imageKey)
 
       let userImage = await userServices.removeImage(userId)
-      return res.status(200).json({ message: 'Image Removed', userImage })
+      return res.status(200).json({ message: 'Image Removed'})
     } else {
       return res.status(403).json({ message: 'Forbidden' })
     }
