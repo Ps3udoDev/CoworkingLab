@@ -111,6 +111,34 @@ class TagsServices {
     }
   }
 
+  async uploadImage(image_url, tag_id) {
+    const transaction = await models.sequelize.transaction();
+    try {
+      let tag = await models.Tags.findByPk(tag_id);
+      if (tag){
+        let updateImage = await tag.update({ image_url }, { transaction });
+        await transaction.commit();
+        return updateImage;
+      }else{
+        throw new CustomError('Not found tag', 404, 'Not Found');
+      } 
+    } catch (error) {
+      await transaction.rollback();
+      throw error;
+    }
+  }
+
+  async getImageOr404(user_id) {
+    const tagImage = await models.Tags.findByPk(user_id);
+    if (!tagImage.image_url)
+      throw new CustomError(
+        'The tag does not have an associated image',
+        404,
+        'Bad request'
+      );
+    return tagImage;
+  }
+
 }
 
 module.exports = TagsServices

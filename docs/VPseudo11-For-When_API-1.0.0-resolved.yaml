@@ -67,7 +67,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SchemaValidationError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Schema Validation Error
+                  errorName:
+                    type: string
+                    example: Bad Request
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: \"*\" is required
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: "*"
+                        type:
+                          type: string
+                          example: any.required
+                        context:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                              example: label
+                            key:
+                              type: string
+                              example: key
         "409":
           description: conflict
           content:
@@ -121,19 +153,40 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
         "404":
           description: The user's email is not found in the database
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
   /auth/me:
     get:
       security:
@@ -217,13 +270,52 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SchemaValidationError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Schema Validation Error
+                  errorName:
+                    type: string
+                    example: Bad Request
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: \"*\" is required
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: "*"
+                        type:
+                          type: string
+                          example: any.required
+                        context:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                              example: label
+                            key:
+                              type: string
+                              example: key
         "404":
           description: the user's email is not found in the database
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
   /auth/change-password/{token}:
     post:
       tags:
@@ -259,13 +351,52 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/SchemaValidationError"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Schema Validation Error
+                  errorName:
+                    type: string
+                    example: Bad Request
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+                          example: \"*\" is required
+                        path:
+                          type: array
+                          items:
+                            type: string
+                            example: "*"
+                        type:
+                          type: string
+                          example: any.required
+                        context:
+                          type: object
+                          properties:
+                            label:
+                              type: string
+                              example: label
+                            key:
+                              type: string
+                              example: key
         "401":
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
 
   /users:
     get:
@@ -554,7 +685,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/errorName"
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: description of error
+                  errorName:
+                    type: string
+                    example: name of error
   /users/{id}/votes:
     get:
       security:
@@ -1077,22 +1215,7 @@ paths:
         content:
           application/x-www-form-urlencoded:
             schema:
-              type: object
-              properties:
-                publication_type_id:
-                  type: integer
-                title:
-                  type: string
-                description:
-                  type: string
-                content:
-                  type: string
-                reference_link:
-                  type: string
-                tags:
-                  type: string
-                  description: the tags to which the publication belongs separated by commas
-                  example: 1,2,3
+              $ref: '#/components/schemas/Publication'
         required: true
       responses:
         "200":
@@ -1513,6 +1636,378 @@ paths:
                   errorName:
                     type: string
                     example: Bad request
+  
+  /tags:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: allows to obtain all the tags
+      description: Paginated view of all tags in the application
+      operationId: getTags
+      parameters:
+        - name: size
+          in: query
+          description: number of results to return in each query
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: page on which the user will be located to obtain results
+          schema:
+            type: number
+        - name: id
+          in: query
+          description: id for tag search using query
+          schema:
+            type: string
+        - name: name
+          in: query
+          description: name for tag search using query
+          schema:
+            type: string
+        - name: description
+          in: query
+          description: description for tag search using query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: returns countries in paginated form
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      count:  
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 1
+                      currentPage:
+                        type: integer
+                        example: 1
+                      results: 
+                        type: array
+                        example: []
+        "401":
+          description: Unauthorized
+
+    post:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: Add a Tag
+      description: allows administrators to add a tag
+      operationId: postTags
+      requestBody:
+        description: The fields needed to create the tag
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tags'
+        required: true
+      responses:
+        "200":
+          description: Tag Added
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Tag Added
+                  result:
+                    type: object
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to make this request
+                  errorName:
+                    type: string
+                    example: Bad request
+  /tags/{id}:
+    get:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: Detailed view of the resource
+      description: only logged in users will be able to access
+      operationId: getTagById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tag to look for
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: tag obtained successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      id: 
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      image_url:
+                        type: string
+                        example: null
+                      created_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      updated_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Tag
+                  errorName:
+                    type: string
+                    example: Bad request
+    put:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: Editing Entity Fields
+      description: allows an administrator to modify the tag fields
+      operationId: putTagById
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tag to modify
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: The fields needed to modify the tag
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Tags'
+        required: true
+      responses:
+        "200":
+          description: tag modified successfully
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Succes Update
+                  results:
+                    type: object
+                    properties:
+                      id: 
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      image_url:
+                        type: string
+                        example: null
+                      created_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      updated_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to make this request
+                  errorName:
+                    type: string
+                    example: Bad request
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Tag
+                  errorName:
+                    type: string
+                    example: Bad request
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: The desired tag can be removed
+      description: allows an administrator to remove a tag
+      operationId: deleteTag
+      parameters:
+        - name: id
+          in: path
+          description: ID of the tag to remove
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: tag removed
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Tag Removed
+                  results:
+                    type: object
+                    properties:
+                      id: 
+                        type: integer
+                        example: 1
+                      name:
+                        type: string
+                      description:
+                        type: string
+                      image_url:
+                        type: string
+                        example: null
+                      created_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      updated_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to make this request
+                  errorName:
+                    type: string
+                    example: Bad request
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Tag
+                  errorName:
+                    type: string
+                    example: Bad request
+  /tags/{id}/add-image:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - Tags
+      summary: The administrator will be able to upload an image of the tag
+      description: The administrator will send an image that will be saved in the chosen service (aws, firebase…)
+      operationId: PostTagImage
+      parameters:
+        - name: id
+          in: path
+          description: Tag ID to upload profile picture
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: the administrator sends an image associated with a tag
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "200":
+          description: upload the image correctly to the cloud
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Image Added
+        "403":
+          description: the user trying to send the request is not authorized to access this resource
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: forbidden
+                  errorName:
+                    type: string
+                    example: Bad Request
+        "404":
+          description: the user you are trying to access does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: 
+                    type: string
+                    example: Not found user
+                  errorName:
+                    type: string
+                    example: Bad Request
   /countries:
     get:
       security:
@@ -1533,24 +2028,21 @@ paths:
                   results:
                     type: object
                     properties:
-                      countries:
-                        type: object
-                        properties:
-                          count:
-                            type: integer
-                            example: 1
-                          rows:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                name:
-                                  type: string
+                      count:  
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 1
+                      currentPage:
+                        type: integer
+                        example: 1
+                      results: 
+                        type: array
+                        example: []
         "401":
           description: Unauthorized
+          
   /states:
     get:
       security:
@@ -1571,25 +2063,18 @@ paths:
                   results:
                     type: object
                     properties:
-                      states:
-                        type: object
-                        properties:
-                          count:
-                            type: integer
-                            example: 1
-                          rows:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                country_id:
-                                  type: integer
-                                  example: 1
-                                name:
-                                  type: string
+                      count:  
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 1
+                      currentPage:
+                        type: integer
+                        example: 1
+                      results: 
+                        type: array
+                        example: []
         "401":
           description: Unauthorized
   /cities:
@@ -1612,25 +2097,18 @@ paths:
                   results:
                     type: object
                     properties:
-                      cities:
-                        type: object
-                        properties:
-                          count:
-                            type: integer
-                            example: 1
-                          rows:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                state_id:
-                                  type: integer
-                                  example: 1
-                                name:
-                                  type: string
+                      count:  
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 1
+                      currentPage:
+                        type: integer
+                        example: 1
+                      results: 
+                        type: array
+                        example: []
         "401":
           description: Unauthorized
   /roles:
@@ -1653,23 +2131,18 @@ paths:
                   results:
                     type: object
                     properties:
-                      roles:
-                        type: object
-                        properties:
-                          count:
-                            type: integer
-                            example: 1
-                          rows:
-                            type: array
-                            items:
-                              type: object
-                              properties:
-                                id:
-                                  type: integer
-                                  example: 1
-                                name:
-                                  type: string
-                                  example: public
+                      count:  
+                        type: integer
+                        example: 1
+                      totalPages:
+                        type: integer
+                        example: 1
+                      currentPage:
+                        type: integer
+                        example: 1
+                      results: 
+                        type: array
+                        example: []
         "401":
           description: Unauthorized
 components:
@@ -1736,46 +2209,28 @@ components:
       properties:
         password:
           type: string
-    SchemaValidationError:
+    Publication:
       type: object
       properties:
-        message:
+        publication_type_id:
+          type: integer
+        title:
           type: string
-          example: Schema Validation Error
-        errorName:
+        description:
           type: string
-          example: Bad Request
-        details:
-          type: array
-          items:
-            type: object
-            properties:
-              message:
-                type: string
-                example: \"*\" is required
-              path:
-                type: array
-                items:
-                  type: string
-                  example: "*"
-              type:
-                type: string
-                example: any.required
-              context:
-                type: object
-                properties:
-                  label:
-                    type: string
-                    example: label
-                  key:
-                    type: string
-                    example: key
-    errorName:
+        content:
+          type: string
+        reference_link:
+          type: string
+        tags:
+          type: string
+          description: the tags to which the publication belongs separated by commas
+          example: 1,2,3
+    Tags:
       type: object
       properties:
-        message:
+        name:
           type: string
-          example: description of error
-        errorName:
+        description:
           type: string
-          example: name of error
+    

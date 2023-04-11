@@ -84,7 +84,7 @@ const removeImage = async (req, res, next) => {
   try {
     const publication = await publicationServices.getPublication(publicationId);
     const admin = await profileServices.findProfileByUserID(userLogin);
-    if (publication.user_id == userLogin || admin.role == 2) {
+    if (publication.user_id == userLogin || admin.role_id == 2) {
       let { image_url } = await publicationImagesService.getImageOr404(
         publicationId,
         order
