@@ -10,7 +10,7 @@ const adminValidate = async (req, res, next) => {
     if (admin.role_id === 2) {
       return next()
     }
-    return res.status(401).json({ message: 'Access Denny' })
+    return res.status(403).json({ message: 'Access Denny' })
   } catch (error) {
     throw new CustomError('Bad Request', 404, error)
   }

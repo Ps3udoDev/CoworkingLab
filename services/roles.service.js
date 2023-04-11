@@ -12,10 +12,10 @@ class RolesService {
       where: {},
     }
 
-    const { limit, offset } = query
-    if (limit && offset) {
-      options.limit = limit
-      options.offset = offset
+    const { size, page } = query
+    if (size && page) {
+      options.size = size
+      options.page = page
     }
 
     const { id } = query
@@ -32,7 +32,17 @@ class RolesService {
     options.distinct = true
 
     const roles = await models.Roles.findAndCountAll(options)
-    return roles
+    const totalPages = size === 0 ? 1 : Math.ceil(roles.count / (size ? size : roles.count));
+    const startIndex = ((page ? page : 1) - 1) * (size ? size : roles.count);
+    const endIndex = startIndex + Number(size ? size : roles.count);
+
+    const results = page > totalPages ? [] : roles.rows.slice(startIndex, endIndex)
+    return {
+      count: roles.count,
+      totalPages,
+      currentPage: page ? page : 1,
+      results
+    };
   }
 
   async createRole({ name }) {

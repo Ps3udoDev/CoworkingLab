@@ -3,12 +3,12 @@ const {
   Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class PublicationsTypes extends Model {
+  class PublicationTypes extends Model {
     static associate(models) {
-      //PublicationsTypes.hasMany(models.Publications, { as: 'publications', foreignKey: 'publication_type_id' })
+      PublicationTypes.hasMany(models.Publications, { as: 'publications', foreignKey: 'publication_type_id' })
     }
   }
-  PublicationsTypes.init({
+  PublicationTypes.init({
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
@@ -21,13 +21,13 @@ module.exports = (sequelize, DataTypes) => {
     },
   }, {
     sequelize,
-    modelName: 'PublicationsTypes',
-    tableName: 'publications_types',
+    modelName: 'PublicationTypes',
+    tableName: 'publication_types',
     underscored: true,
     timestamps: true,
     scopes: {
       no_timestamps: { attributes: { exclude: ['created_at', 'updated_at'] } }
     }
   });
-  return PublicationsTypes;
+  return PublicationTypes;
 };

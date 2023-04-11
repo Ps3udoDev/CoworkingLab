@@ -5,9 +5,10 @@ const publicationTypesServices = new PublicationTypesServices()
 
 const getAllPublicationsTypes = async (req, res, next) => {
   try {
-    const { limit, offset, id, name, description } = req.query
-    const publicationTypes = await publicationTypesServices.findAndCount({ limit, offset, id, name, description })
-    return res.status(200).json({ results: { 'publications-types': publicationTypes } })
+    const { size, page, id, name, description } = req.query
+    const publicationTypes = await publicationTypesServices.findAndCount({ size, page, id, name, description })
+    const { count, currentPage, totalPages, results } = publicationTypes
+    return res.status(200).json({ results: { count, totalPages, currentPage, results } })
   } catch (error) {
     next(error)
   }
@@ -17,7 +18,7 @@ const getPublicationTypeById = async (req, res, next) => {
   try {
     const id = req.params.id
     const publicationType = await publicationTypesServices.getPublicationTypeOr404(id)
-    return res.status(200).json({ results: { 'publication-type': publicationType } })
+    return res.status(200).json({ results: publicationType })
   } catch (error) {
     next(error)
   }
