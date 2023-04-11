@@ -20,6 +20,10 @@ tags:
     description: It is in charge of managing the users in the API. Includes operations to modify and get users.
   - name: Publications Types
     description: Refers to the different types of posts found in the API. It includes obtaining and modifying the types of publications.
+  - name: Publications
+    description: It is in charge of carrying out actions on user publications
+  - name: Tags
+    description: It refers to the actions that you have on the application tags
   - name: Countries
     description: It is in charge of obtaining all the countries registered in the API
   - name: States
@@ -961,6 +965,551 @@ paths:
                   message:
                     type: string
                     example: post type not found or missing fields to fill
+                  errorName:
+                    type: string
+                    example: Bad request
+  
+  /publications:
+    get:
+      tags:
+        - Publications
+      summary: Gets the post records
+      description: Publications can be filtered based on all their fields
+      operationId: getPublications
+      responses:
+        "200":
+          description: Paginated view of posts as in the previous examples
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      count:
+                        type: number
+                        example: 1
+                      totalPages:
+                        type: number
+                        example: 1
+                      currentPage:
+                        type: number
+                        example: 1
+                      results:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            id:
+                              type: string
+                              example: 5689d6cc-1c9a-45fb-bc18-dbc8a718b973
+                            user_id:
+                              type: string
+                              example: 3b542f0d-fe72-45bf-99e9-ee5277ee9d74
+                            publication_type_id:
+                              type: integer
+                              example: 1
+                            city_id:
+                              type: integer
+                              example: 1
+                            title:
+                              type: string
+                            description:
+                              type: string
+                            content:
+                              type: string
+                            reference_link:
+                              type: string
+                            created_at:
+                              type: string
+                              example: 2023-04-03T21:54:13.301Z
+                            updated_at:
+                              type: string
+                              example: 2023-04-03T21:54:13.301Z
+                            votes_count:
+                              type: integer
+                              example: 1
+                            images:
+                              type: array
+                              example: []
+                            user:
+                              type: object
+                              properties:
+                                id:
+                                  type: string
+                                  example: 3b542f0d-fe72-45bf-99e9-ee5277ee9d74
+                                first_name:
+                                  type: string
+                                last_name:
+                                  type: string
+                                image_url:
+                                  type: string
+                                  example: null
+                            publication_type:
+                              type: object
+                              properties:
+                                id:
+                                  type: integer
+                                  example: 1
+                                name:
+                                  type: string
+                                description:
+                                  type: string
+                                created_at:
+                                  type: string
+                                  example: 2023-04-03T21:54:13.301Z
+                                updated_at:
+                                  type: string
+                                  example: 2023-04-03T21:54:13.301Z
+                            tags:
+                              type: array
+                              example: []
+    post:
+      security:
+        - JWT: []
+      tags:
+        - Publications
+      summary: A post is added
+      description: The user who is logged in and wants to make a publication can do so
+      operationId: postPublication
+      requestBody:
+        description: The fields needed to create the publication
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                publication_type_id:
+                  type: integer
+                title:
+                  type: string
+                description:
+                  type: string
+                content:
+                  type: string
+                reference_link:
+                  type: string
+                tags:
+                  type: string
+                  description: the tags to which the publication belongs separated by commas
+                  example: 1,2,3
+        required: true
+      responses:
+        "200":
+          description: resource was created
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    example: f89584e5-2e60-42cd-9ef1-742817e2b5f9
+                  user_id:
+                    type: string
+                    example: ff352d8e-a6bd-4076-8bd8-39a73b5ebe9c
+                  publication_type_id:
+                    type: integer
+                    example: 1
+                  city_id:
+                    type: integer
+                    example: 1
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  content: 
+                    type: string
+                  reference_link:
+                    type: string
+                  created_at:
+                    type: string
+                    example: 2023-04-03T21:54:13.301Z
+                  updated_at:
+                    type: string
+                    example: 2023-04-03T21:54:13.301Z
+                  
+        "401":
+          description: Unauthorized
+        "404":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Missing Data
+                  errorName:
+                    type: string
+                    example: Bad request
+  /publications/{id}:
+    get:
+      tags:
+        - Publications
+      summary: Detailed view of a publication
+      description: allows obtaining a record of a publication based on its id
+      operationId: getPublicationById
+      parameters:
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Post Fount
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 5689d6cc-1c9a-45fb-bc18-dbc8a718b973
+                      user_id:
+                        type: string
+                        example: 3b542f0d-fe72-45bf-99e9-ee5277ee9d74
+                      publication_type_id:
+                        type: integer
+                        example: 1
+                      city_id:
+                        type: integer
+                        example: 1
+                      title:
+                        type: string
+                      description:
+                        type: string
+                      content:
+                        type: string
+                      reference_link:
+                        type: string
+                      created_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      updated_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      votes_count:
+                        type: integer
+                        example: 1
+                      images:
+                        type: array
+                        example: []
+                      user:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: 3b542f0d-fe72-45bf-99e9-ee5277ee9d74
+                          first_name:
+                            type: string
+                          last_name:
+                            type: string
+                          image_url:
+                            type: string
+                            example: null
+                      publication_type:
+                        type: object
+                        properties:
+                          id:
+                            type: integer
+                            example: 1
+                          name:
+                            type: string
+                          description:
+                            type: string
+                          created_at:
+                            type: string
+                            example: 2023-04-03T21:54:13.301Z
+                          updated_at:
+                            type: string
+                            example: 2023-04-03T21:54:13.301Z
+                      tags:
+                        type: array
+                        example: []
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Publication
+                  errorName:
+                    type: string
+                    example: Bad request
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - Publications
+      summary: Post may be removed
+      description: Only the user who owns the post will be able to delete their post
+      operationId: deletePublication
+      parameters:
+        - name: id
+          in: path
+          description: id for user search using query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: resource removed
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: this post does not belong to you
+                  errorName:
+                    type: string
+                    example: Forbidden
+        "404":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: There are images stored for this post in the cloud please delete them first or Not Found Publication
+                  errorName:
+                    type: string
+                    example: Bad request
+  
+  /publications/{id}/vote:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - Publications
+      summary: allows to vote and remove the vote of a publication
+      description: You can vote on a post and you can unvote the post
+      operationId: postVotePublication
+      parameters:
+        - name: id
+          in: path
+          description: id of the publication to vote
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: vote removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: vote removed
+        "201":
+          description: added vote
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: added vote
+        "401":
+          description: Unauthorized
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Publication
+                  errorName:
+                    type: string
+                    example: Bad request
+  
+  /publications/{id}/add-image:
+    post:
+      security:
+        - JWT: []
+      tags:
+        - Publications
+      summary: allows you to add images
+      description: Only the admin or the owner can do this, an image will be added to the save service (aws, firebase...). Each publication can only have 3 images with a maximum weight of 524288 | 0.5mb
+      operationId: postImagePublications
+      parameters:
+        - name: id
+          in: path
+          description: Post ID to upload the images
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: You can edit the fields that do not compromise authentication
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: array
+                  maxItems: 3
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Posted Image
+          content:
+            application/json:
+              schema:
+                properties:
+                  results:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+                        example: Count of uploaded images 1
+                      imagesUploaded:
+                        type: array
+                        example: []
+                      imageErrors:
+                        type: array
+                        example: []
+
+        "401":
+          description: Unauthorized
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: No images received
+                  errorName:
+                    type: string
+                    example: Bad request
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to make this request
+                  errorName:
+                    type: string
+                    example: Bad request
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Publication
+                  errorName:
+                    type: string
+                    example: Bad request
+        "409":
+          description: Conflict
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not available spots for images for this publication. First, remove a image
+                  errorName:
+                    type: string
+                    example: No Spots Available
+  
+  /publications/{id}/remove-image/{order}:
+    delete:
+      security:
+        - JWT: []
+      tags:
+        - Publications
+      summary: allows you to delete images
+      description: Only the admin or the owner himself can do this, it can be removed from the save service and from the DB
+      operationId: deleteImagePublication
+      parameters:
+        - name: id
+          in: path
+          description: Post ID to delete images
+          required: true
+          schema:
+            type: string
+        - name: order
+          in: path
+          description: order of the image to delete
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Removed
+                  image:
+                    type: object
+                    properties:
+                      publication_id: 
+                        type: string
+                        example: c99c6f11-ba70-4b61-a25d-9db7ee9aa172
+                      image_url:
+                        type: string
+                      order: 
+                        type: integer
+                      created_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+                      updated_at:
+                        type: string
+                        example: 2023-04-03T21:54:13.301Z
+        "401":
+          description: Unauthorized
+        "403":
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not authorized to make this request
+                  errorName:
+                    type: string
+                    example: Bad request
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                    example: Not Found Publication Image with this order
                   errorName:
                     type: string
                     example: Bad request
