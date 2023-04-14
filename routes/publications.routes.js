@@ -2,15 +2,15 @@ const router = require('express').Router()
 const passport = require('../libs/passport')
 
 const { getAllPublications, postPublication, getPublicationById, deletePublication, postVotePublication } = require('../controllers/publication.controller')
-const {uploadImage, removeImage} = require('../controllers/publication-images.controller')
+const { uploadImage, removeImage } = require('../controllers/publication-images.controller')
 const { multerPublicationsPhotos } = require('../middlewares/multer.middleware')
 
 router.route('/')
-  .get(getAllPublications)
+  .get(passport.authenticate(['jwt', 'anonymous'], { session: false }), getAllPublications)
   .post(passport.authenticate('jwt', { session: false }), postPublication)
 
 router.route('/:id')
-  .get(getPublicationById)
+  .get(passport.authenticate(['jwt', 'anonymous'], { session: false }), getPublicationById)
   .delete(passport.authenticate('jwt', { session: false }), deletePublication)
 
 router.post('/:id/vote', passport.authenticate('jwt', { session: false }), postVotePublication)

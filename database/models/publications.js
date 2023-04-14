@@ -9,8 +9,10 @@ module.exports = (sequelize, DataTypes) => {
       Publications.belongsTo(models.PublicationTypes, { as: 'publication_type', foreignKey: 'publication_type_id' })
       Publications.belongsTo(models.Cities, { as: 'cities', foreignKey: 'city_id' })
       Publications.hasMany(models.PublicationsImages, { as: 'images', foreignKey: 'publication_id' })
-      Publications.belongsToMany(models.Tags, { through: models.PublicationsTags, as: 'tags', foreignKey: 'publication_id', otherKey: 'tag_id', onDelete: 'CASCADE' })
-      Publications.belongsToMany(models.Users, { through: models.Votes, as: 'votes', foreignKey: 'publication_id', otherKey: 'user_id', onDelete: 'CASCADE' })
+      Publications.belongsToMany(models.Users, { as: 'same_vote', foreignKey: 'publication_id' , through: models.Votes})
+      Publications.belongsToMany(models.Users, { as: 'votes', foreignKey: 'publication_id' , through: models.Votes})
+      Publications.belongsToMany(models.Tags, { as: 'filtered_tags', foreignKey: 'publication_id' , through: models.PublicationsTags})
+      Publications.belongsToMany(models.Tags, { as: 'tags', foreignKey: 'publication_id' , through: models.PublicationsTags})
       Publications.addScope('votes_count', {
         attributes: ['id', 'user_id', 'publication_type_id', 'city_id', 'title', 'description', 'content', 'reference_link', 'created_at', 'updated_at'],
         include: [

@@ -5,9 +5,9 @@ const { CustomError } = require('../utils/helpers');
 const { raw } = require('express');
 
 class PublicationsServices {
-  constructor() {}
+  constructor() { }
 
-  async findAndCount(query) {
+  async findAndCount(query, user_id) {
     const options = {
       where: {},
       attributes: {
@@ -26,6 +26,19 @@ class PublicationsServices {
       },
       include: [],
     };
+    if (user_id) {
+      options.include.push({
+        model: models.Users,
+        as: 'same_vote',
+        where: { id: user_id },
+        attributes: ['id', 'first_name', 'last_name'],
+        required: false,
+        through: {
+          where: { user_id },
+          attributes: []
+        }
+      })
+    }
 
     const { size, page } = query;
     if (size && page) {
@@ -38,14 +51,13 @@ class PublicationsServices {
       options.where.id = id;
     }
     const {
-      user_id,
       publication_type_id,
       title,
       description,
       content,
       reference_link,
     } = query;
-    if (user_id) options.where.user_id = user_id;
+
     if (publication_type_id)
       options.where.publication_type_id = { [Op.eq]: publication_type_id };
     if (title) options.where.title = { [Op.iLike]: `%${title}%` };
@@ -110,7 +122,8 @@ class PublicationsServices {
         });
         if (findedTags.length > 0) {
           let tags_ids = findedTags.map((tag) => tag['id']);
-          await newPublication.setTags(tags_ids, { transaction });
+          await newPublication.setTags(tags_ids, { transaction, through: { tag_id: 'tagId' } });
+
         }
       }
       await transaction.commit();
@@ -131,8 +144,8 @@ class PublicationsServices {
     return publication;
   }
 
-  async getPublication(id) {
-    let publication = await models.Publications.findByPk(id, {
+  async getPublication(id, user_id) {
+    let options = {
       attributes: {
         include: [
           [
@@ -169,7 +182,22 @@ class PublicationsServices {
           },
         },
       ],
-    });
+    }
+    if (user_id) {
+      options.include.push({
+        model: models.Users,
+        as: 'same_vote',
+        where: { id: user_id },
+        attributes: ['id', 'first_name', 'last_name'],
+        required: false,
+        through: {
+          where: { user_id },
+          attributes: []
+        }
+      })
+    }
+
+    let publication = await models.Publications.findByPk(id, options);
     if (!publication)
       throw new CustomError('Not found Publication', 404, 'Not Found');
     return publication;

@@ -20,6 +20,24 @@ const getAllPublications = async (req, res, next) => {
       content,
       reference_link,
     } = req.query;
+    let user = req.user
+    if (!user) {
+      const publications = await publicarionServices.findAndCount({
+        limit,
+        offset,
+        tags,
+        id,
+        publication_type_id,
+        title,
+        description,
+        content,
+        reference_link,
+      }, null);
+      const { count, currentPage, totalPages, results } = publications;
+      return res
+        .status(200)
+        .json({ results: { count, totalPages, currentPage, results } });
+    }
     const publications = await publicarionServices.findAndCount({
       limit,
       offset,
@@ -30,7 +48,7 @@ const getAllPublications = async (req, res, next) => {
       description,
       content,
       reference_link,
-    });
+    }, user.id);
     const { count, currentPage, totalPages, results } = publications;
     return res
       .status(200)
@@ -84,8 +102,13 @@ const postPublication = async (req, res, next) => {
 const getPublicationById = async (req, res, next) => {
   try {
     const id = req.params.id;
+    let user = req.user
     try {
-      const publication = await publicarionServices.getPublication(id);
+      if (!user) {
+        const publication = await publicarionServices.getPublication(id, null);
+        return res.status(200).json({ results: publication });
+      }
+      const publication = await publicarionServices.getPublication(id, user.id);
       return res.status(200).json({ results: publication });
     } catch (error) {
       throw new CustomError('Not found Publication', 404, 'Not Found');
