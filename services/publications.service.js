@@ -293,6 +293,42 @@ class PublicationsServices {
           where: {
             user_id: userId,
           },
+          attributes: {
+            include: [
+              [
+                cast(
+                  literal(
+                    `(SELECT COUNT(*) FROM "votes" 
+                WHERE "votes"."publication_id" = "Publications"."id")`
+                  ),
+                  'integer'
+                ),
+                'votes_count',
+              ],
+            ],
+          },
+          include: [
+            {
+              model: models.PublicationsImages,
+              as: 'images',
+            },
+            {
+              model: models.Users,
+              as: 'user',
+              attributes: ['first_name', 'last_name', 'image_url'],
+            },
+            {
+              model: models.PublicationTypes,
+              as: 'publication_type',
+            },
+            {
+              model: models.Tags,
+              as: 'tags',
+              through: {
+                attributes: [],
+              },
+            },
+          ],
         };
         const { size, page } = query;
         if (size && page) {
